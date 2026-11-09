@@ -1,0 +1,8373 @@
+{
+ "schemaVersion": 4,
+ "variables": [
+  {
+   "name": "hp",
+   "initial": 10
+  },
+  {
+   "name": "maxHp",
+   "initial": 10
+  },
+  {
+   "name": "level",
+   "initial": 1
+  },
+  {
+   "name": "xp",
+   "initial": 0
+  },
+  {
+   "name": "xpNeed",
+   "initial": 100
+  },
+  {
+   "name": "atk",
+   "initial": 1
+  },
+  {
+   "name": "gold",
+   "initial": 0
+  },
+  {
+   "name": "potion",
+   "initial": 0
+  },
+  {
+   "name": "jelly",
+   "initial": 0
+  },
+  {
+   "name": "quest",
+   "initial": 0
+  },
+  {
+   "name": "from",
+   "initial": 0
+  },
+  {
+   "name": "facing",
+   "initial": 0
+  },
+  {
+   "name": "moving",
+   "initial": 0
+  },
+  {
+   "name": "bag",
+   "initial": 0
+  },
+  {
+   "name": "qshow",
+   "initial": 9
+  },
+  {
+   "name": "dlg",
+   "initial": 0
+  },
+  {
+   "name": "consumed",
+   "initial": 0
+  },
+  {
+   "name": "atkCd",
+   "initial": 0
+  },
+  {
+   "name": "hurtCd",
+   "initial": 0
+  },
+  {
+   "name": "bannerT",
+   "initial": 0
+  },
+  {
+   "name": "faintT",
+   "initial": 0
+  },
+  {
+   "name": "restT",
+   "initial": 0
+  },
+  {
+   "name": "tick",
+   "initial": 0
+  },
+  {
+   "name": "s1",
+   "initial": 3
+  },
+  {
+   "name": "r1",
+   "initial": 0
+  },
+  {
+   "name": "d1",
+   "initial": 0
+  },
+  {
+   "name": "s2",
+   "initial": 3
+  },
+  {
+   "name": "r2",
+   "initial": 0
+  },
+  {
+   "name": "d2",
+   "initial": 0
+  },
+  {
+   "name": "s3",
+   "initial": 3
+  },
+  {
+   "name": "r3",
+   "initial": 0
+  },
+  {
+   "name": "d3",
+   "initial": 0
+  },
+  {
+   "name": "s4",
+   "initial": 3
+  },
+  {
+   "name": "r4",
+   "initial": 0
+  },
+  {
+   "name": "d4",
+   "initial": 0
+  }
+ ],
+ "sounds": [
+  {
+   "name": "hit",
+   "source": "assets/sounds/hit.wav"
+  },
+  {
+   "name": "hurt",
+   "source": "assets/sounds/hurt.wav"
+  },
+  {
+   "name": "pickup",
+   "source": "assets/sounds/pickup.wav"
+  },
+  {
+   "name": "talk",
+   "source": "assets/sounds/talk.wav"
+  },
+  {
+   "name": "levelup",
+   "source": "assets/sounds/levelup.wav"
+  },
+  {
+   "name": "door",
+   "source": "assets/sounds/door.wav"
+  },
+  {
+   "name": "kill",
+   "source": "assets/sounds/kill.wav"
+  },
+  {
+   "name": "theme",
+   "source": "assets/sounds/theme.wav"
+  }
+ ],
+ "scenes": [
+  {
+   "scene": "village",
+   "events": [
+    {
+     "id": "b8",
+     "type": "whenGameStarts",
+     "actions": [
+      {
+       "id": "b1",
+       "type": "cameraFollow",
+       "item": "hero"
+      },
+      {
+       "id": "b2",
+       "type": "setVolume",
+       "value": 70
+      },
+      {
+       "id": "b3",
+       "type": "playMusic",
+       "sound": "theme"
+      },
+      {
+       "id": "b4",
+       "type": "setVariable",
+       "variable": "atkCd",
+       "value": 0
+      },
+      {
+       "id": "b5",
+       "type": "setVariable",
+       "variable": "hurtCd",
+       "value": 0
+      },
+      {
+       "id": "b6",
+       "type": "setVariable",
+       "variable": "bag",
+       "value": 0
+      },
+      {
+       "id": "b7",
+       "type": "setVariable",
+       "variable": "dlg",
+       "value": 0
+      },
+      {
+       "id": "b10",
+       "type": "ifVariable",
+       "variable": "from",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b9",
+         "type": "setPosition",
+         "item": "hero",
+         "x": 704,
+         "y": 640
+        }
+       ]
+      },
+      {
+       "id": "b12",
+       "type": "ifVariable",
+       "variable": "from",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b11",
+         "type": "setPosition",
+         "item": "hero",
+         "x": 2304,
+         "y": 768
+        }
+       ]
+      },
+      {
+       "id": "b14",
+       "type": "ifVariable",
+       "variable": "from",
+       "comparison": "equal",
+       "value": 3,
+       "actions": [
+        {
+         "id": "b13",
+         "type": "setPosition",
+         "item": "hero",
+         "x": 1344,
+         "y": 640
+        }
+       ]
+      },
+      {
+       "id": "b15",
+       "type": "hide",
+       "item": "banner"
+      }
+     ]
+    },
+    {
+     "id": "b17",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b16",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 0
+      }
+     ]
+    },
+    {
+     "id": "b20",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b18",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 1
+      },
+      {
+       "id": "b19",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      }
+     ],
+     "button": "moveUp"
+    },
+    {
+     "id": "b23",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b21",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 0
+      },
+      {
+       "id": "b22",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      }
+     ],
+     "button": "moveDown"
+    },
+    {
+     "id": "b27",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b24",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 2
+      },
+      {
+       "id": "b25",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      },
+      {
+       "id": "b26",
+       "type": "flipItem",
+       "item": "hero",
+       "flipped": true
+      }
+     ],
+     "button": "moveLeft"
+    },
+    {
+     "id": "b31",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b28",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 2
+      },
+      {
+       "id": "b29",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      },
+      {
+       "id": "b30",
+       "type": "flipItem",
+       "item": "hero",
+       "flipped": false
+      }
+     ],
+     "button": "moveRight"
+    },
+    {
+     "id": "b47",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b36",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b33",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b32",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkDown"
+          }
+         ]
+        },
+        {
+         "id": "b35",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b34",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleDown"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b41",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b38",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b37",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkUp"
+          }
+         ]
+        },
+        {
+         "id": "b40",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b39",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleUp"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b46",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b43",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b42",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkSide"
+          }
+         ]
+        },
+        {
+         "id": "b45",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b44",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleSide"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b54",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b49",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b48",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 2
+        }
+       ]
+      },
+      {
+       "id": "b51",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b50",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 1
+        }
+       ]
+      },
+      {
+       "id": "b53",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b52",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 0
+        }
+       ]
+      }
+     ],
+     "button": "triangle"
+    },
+    {
+     "id": "b90",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b89",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b88",
+         "type": "ifVariable",
+         "variable": "potion",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b55",
+           "type": "changeVariable",
+           "variable": "potion",
+           "value": -1
+          },
+          {
+           "id": "b56",
+           "type": "changeVariable",
+           "variable": "hp",
+           "value": 5
+          },
+          {
+           "id": "b57",
+           "type": "playSound",
+           "sound": "pickup"
+          },
+          {
+           "id": "b60",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 1,
+           "actions": [
+            {
+             "id": "b59",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 10,
+             "actions": [
+              {
+               "id": "b58",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 10
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b63",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 2,
+           "actions": [
+            {
+             "id": "b62",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 12,
+             "actions": [
+              {
+               "id": "b61",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 12
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b66",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 3,
+           "actions": [
+            {
+             "id": "b65",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 14,
+             "actions": [
+              {
+               "id": "b64",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 14
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b69",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 4,
+           "actions": [
+            {
+             "id": "b68",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 16,
+             "actions": [
+              {
+               "id": "b67",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 16
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b72",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 5,
+           "actions": [
+            {
+             "id": "b71",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 18,
+             "actions": [
+              {
+               "id": "b70",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 18
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b75",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 6,
+           "actions": [
+            {
+             "id": "b74",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 20,
+             "actions": [
+              {
+               "id": "b73",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 20
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b78",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 7,
+           "actions": [
+            {
+             "id": "b77",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 22,
+             "actions": [
+              {
+               "id": "b76",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 22
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b81",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 8,
+           "actions": [
+            {
+             "id": "b80",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 24,
+             "actions": [
+              {
+               "id": "b79",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 24
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b84",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 9,
+           "actions": [
+            {
+             "id": "b83",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 26,
+             "actions": [
+              {
+               "id": "b82",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 26
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b87",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 10,
+           "actions": [
+            {
+             "id": "b86",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 28,
+             "actions": [
+              {
+               "id": "b85",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 28
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "button": "circle"
+    },
+    {
+     "id": "b199",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b102",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b101",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 100,
+         "actions": [
+          {
+           "id": "b91",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -100
+          },
+          {
+           "id": "b92",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 2
+          },
+          {
+           "id": "b93",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 200
+          },
+          {
+           "id": "b94",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 12
+          },
+          {
+           "id": "b95",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 12
+          },
+          {
+           "id": "b96",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 2
+          },
+          {
+           "id": "b97",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b98",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b99",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b100",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b114",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b113",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 200,
+         "actions": [
+          {
+           "id": "b103",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -200
+          },
+          {
+           "id": "b104",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 3
+          },
+          {
+           "id": "b105",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 300
+          },
+          {
+           "id": "b106",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 14
+          },
+          {
+           "id": "b107",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 14
+          },
+          {
+           "id": "b108",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b109",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b110",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b111",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b112",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b126",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 3,
+       "actions": [
+        {
+         "id": "b125",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 300,
+         "actions": [
+          {
+           "id": "b115",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -300
+          },
+          {
+           "id": "b116",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 4
+          },
+          {
+           "id": "b117",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 400
+          },
+          {
+           "id": "b118",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 16
+          },
+          {
+           "id": "b119",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 16
+          },
+          {
+           "id": "b120",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b121",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b122",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b123",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b124",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b138",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 4,
+       "actions": [
+        {
+         "id": "b137",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 400,
+         "actions": [
+          {
+           "id": "b127",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -400
+          },
+          {
+           "id": "b128",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 5
+          },
+          {
+           "id": "b129",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 500
+          },
+          {
+           "id": "b130",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 18
+          },
+          {
+           "id": "b131",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 18
+          },
+          {
+           "id": "b132",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b133",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b134",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b135",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b136",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b150",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 5,
+       "actions": [
+        {
+         "id": "b149",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 500,
+         "actions": [
+          {
+           "id": "b139",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -500
+          },
+          {
+           "id": "b140",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 6
+          },
+          {
+           "id": "b141",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 600
+          },
+          {
+           "id": "b142",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 20
+          },
+          {
+           "id": "b143",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 20
+          },
+          {
+           "id": "b144",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b145",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b146",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b147",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b148",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b162",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 6,
+       "actions": [
+        {
+         "id": "b161",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 600,
+         "actions": [
+          {
+           "id": "b151",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -600
+          },
+          {
+           "id": "b152",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 7
+          },
+          {
+           "id": "b153",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 700
+          },
+          {
+           "id": "b154",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 22
+          },
+          {
+           "id": "b155",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 22
+          },
+          {
+           "id": "b156",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b157",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b158",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b159",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b160",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b174",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 7,
+       "actions": [
+        {
+         "id": "b173",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 700,
+         "actions": [
+          {
+           "id": "b163",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -700
+          },
+          {
+           "id": "b164",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 8
+          },
+          {
+           "id": "b165",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 800
+          },
+          {
+           "id": "b166",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 24
+          },
+          {
+           "id": "b167",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 24
+          },
+          {
+           "id": "b168",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b169",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b170",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b171",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b172",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b186",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 8,
+       "actions": [
+        {
+         "id": "b185",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 800,
+         "actions": [
+          {
+           "id": "b175",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -800
+          },
+          {
+           "id": "b176",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 9
+          },
+          {
+           "id": "b177",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 900
+          },
+          {
+           "id": "b178",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 26
+          },
+          {
+           "id": "b179",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 26
+          },
+          {
+           "id": "b180",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b181",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b182",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b183",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b184",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b198",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 9,
+       "actions": [
+        {
+         "id": "b197",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 900,
+         "actions": [
+          {
+           "id": "b187",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -900
+          },
+          {
+           "id": "b188",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 10
+          },
+          {
+           "id": "b189",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 1000
+          },
+          {
+           "id": "b190",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 28
+          },
+          {
+           "id": "b191",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 28
+          },
+          {
+           "id": "b192",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b193",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b194",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b195",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b196",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b272",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b201",
+       "type": "ifVariable",
+       "variable": "bannerT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b200",
+         "type": "changeVariable",
+         "variable": "bannerT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b203",
+       "type": "ifVariable",
+       "variable": "faintT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b202",
+         "type": "changeVariable",
+         "variable": "faintT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b205",
+       "type": "ifVariable",
+       "variable": "restT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b204",
+         "type": "changeVariable",
+         "variable": "restT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b206",
+       "type": "hide",
+       "item": "banner"
+      },
+      {
+       "id": "b208",
+       "type": "ifVariable",
+       "variable": "bannerT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b207",
+         "type": "show",
+         "item": "banner"
+        }
+       ]
+      },
+      {
+       "id": "b209",
+       "type": "hide",
+       "item": "faint"
+      },
+      {
+       "id": "b211",
+       "type": "ifVariable",
+       "variable": "faintT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b210",
+         "type": "show",
+         "item": "faint"
+        }
+       ]
+      },
+      {
+       "id": "b212",
+       "type": "hide",
+       "item": "bag"
+      },
+      {
+       "id": "b213",
+       "type": "hide",
+       "item": "bag_s1"
+      },
+      {
+       "id": "b214",
+       "type": "hide",
+       "item": "bag_s2"
+      },
+      {
+       "id": "b215",
+       "type": "hide",
+       "item": "bag_s3"
+      },
+      {
+       "id": "b216",
+       "type": "hide",
+       "item": "bag_i1"
+      },
+      {
+       "id": "b217",
+       "type": "hide",
+       "item": "bag_i2"
+      },
+      {
+       "id": "b218",
+       "type": "hide",
+       "item": "bag_i3"
+      },
+      {
+       "id": "b219",
+       "type": "hide",
+       "item": "bag_t"
+      },
+      {
+       "id": "b220",
+       "type": "hide",
+       "item": "bag_n1"
+      },
+      {
+       "id": "b221",
+       "type": "hide",
+       "item": "bag_c1"
+      },
+      {
+       "id": "b222",
+       "type": "hide",
+       "item": "bag_n2"
+      },
+      {
+       "id": "b223",
+       "type": "hide",
+       "item": "bag_c2"
+      },
+      {
+       "id": "b224",
+       "type": "hide",
+       "item": "bag_n3"
+      },
+      {
+       "id": "b225",
+       "type": "hide",
+       "item": "bag_c3"
+      },
+      {
+       "id": "b226",
+       "type": "hide",
+       "item": "bag_a"
+      },
+      {
+       "id": "b227",
+       "type": "hide",
+       "item": "bag_l"
+      },
+      {
+       "id": "b228",
+       "type": "hide",
+       "item": "bag_f"
+      },
+      {
+       "id": "b246",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b229",
+         "type": "show",
+         "item": "bag"
+        },
+        {
+         "id": "b230",
+         "type": "show",
+         "item": "bag_s1"
+        },
+        {
+         "id": "b231",
+         "type": "show",
+         "item": "bag_s2"
+        },
+        {
+         "id": "b232",
+         "type": "show",
+         "item": "bag_s3"
+        },
+        {
+         "id": "b233",
+         "type": "show",
+         "item": "bag_i1"
+        },
+        {
+         "id": "b234",
+         "type": "show",
+         "item": "bag_i2"
+        },
+        {
+         "id": "b235",
+         "type": "show",
+         "item": "bag_i3"
+        },
+        {
+         "id": "b236",
+         "type": "show",
+         "item": "bag_t"
+        },
+        {
+         "id": "b237",
+         "type": "show",
+         "item": "bag_n1"
+        },
+        {
+         "id": "b238",
+         "type": "show",
+         "item": "bag_c1"
+        },
+        {
+         "id": "b239",
+         "type": "show",
+         "item": "bag_n2"
+        },
+        {
+         "id": "b240",
+         "type": "show",
+         "item": "bag_c2"
+        },
+        {
+         "id": "b241",
+         "type": "show",
+         "item": "bag_n3"
+        },
+        {
+         "id": "b242",
+         "type": "show",
+         "item": "bag_c3"
+        },
+        {
+         "id": "b243",
+         "type": "show",
+         "item": "bag_a"
+        },
+        {
+         "id": "b244",
+         "type": "show",
+         "item": "bag_l"
+        },
+        {
+         "id": "b245",
+         "type": "show",
+         "item": "bag_f"
+        }
+       ]
+      },
+      {
+       "id": "b247",
+       "type": "hide",
+       "item": "quest_panel"
+      },
+      {
+       "id": "b248",
+       "type": "hide",
+       "item": "quest_icon"
+      },
+      {
+       "id": "b249",
+       "type": "hide",
+       "item": "quest_text"
+      },
+      {
+       "id": "b253",
+       "type": "ifVariable",
+       "variable": "quest",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b250",
+         "type": "show",
+         "item": "quest_panel"
+        },
+        {
+         "id": "b251",
+         "type": "show",
+         "item": "quest_icon"
+        },
+        {
+         "id": "b252",
+         "type": "show",
+         "item": "quest_text"
+        }
+       ]
+      },
+      {
+       "id": "b254",
+       "type": "hide",
+       "item": "bag_q0"
+      },
+      {
+       "id": "b256",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b255",
+         "type": "show",
+         "item": "bag_q0"
+        }
+       ]
+      },
+      {
+       "id": "b257",
+       "type": "hide",
+       "item": "bag_q1"
+      },
+      {
+       "id": "b259",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b258",
+         "type": "show",
+         "item": "bag_q1"
+        }
+       ]
+      },
+      {
+       "id": "b260",
+       "type": "hide",
+       "item": "bag_q2"
+      },
+      {
+       "id": "b262",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b261",
+         "type": "show",
+         "item": "bag_q2"
+        }
+       ]
+      },
+      {
+       "id": "b264",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "notEqual",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b263",
+         "type": "setVariable",
+         "variable": "qshow",
+         "value": 9
+        }
+       ]
+      },
+      {
+       "id": "b271",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b266",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b265",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 0
+          }
+         ]
+        },
+        {
+         "id": "b268",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b267",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 1
+          }
+         ]
+        },
+        {
+         "id": "b270",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 2,
+         "actions": [
+          {
+           "id": "b269",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 2
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b320",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b273",
+       "type": "hide",
+       "item": "dlg_panel"
+      },
+      {
+       "id": "b274",
+       "type": "hide",
+       "item": "dlg_x"
+      },
+      {
+       "id": "b277",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "notEqual",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b275",
+         "type": "show",
+         "item": "dlg_panel"
+        },
+        {
+         "id": "b276",
+         "type": "show",
+         "item": "dlg_x"
+        }
+       ]
+      },
+      {
+       "id": "b278",
+       "type": "hide",
+       "item": "who1"
+      },
+      {
+       "id": "b279",
+       "type": "hide",
+       "item": "line1"
+      },
+      {
+       "id": "b282",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b280",
+         "type": "show",
+         "item": "who1"
+        },
+        {
+         "id": "b281",
+         "type": "show",
+         "item": "line1"
+        }
+       ]
+      },
+      {
+       "id": "b283",
+       "type": "hide",
+       "item": "who2"
+      },
+      {
+       "id": "b284",
+       "type": "hide",
+       "item": "line2"
+      },
+      {
+       "id": "b287",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b285",
+         "type": "show",
+         "item": "who2"
+        },
+        {
+         "id": "b286",
+         "type": "show",
+         "item": "line2"
+        }
+       ]
+      },
+      {
+       "id": "b288",
+       "type": "hide",
+       "item": "who3"
+      },
+      {
+       "id": "b289",
+       "type": "hide",
+       "item": "line3"
+      },
+      {
+       "id": "b292",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 3,
+       "actions": [
+        {
+         "id": "b290",
+         "type": "show",
+         "item": "who3"
+        },
+        {
+         "id": "b291",
+         "type": "show",
+         "item": "line3"
+        }
+       ]
+      },
+      {
+       "id": "b293",
+       "type": "hide",
+       "item": "who4"
+      },
+      {
+       "id": "b294",
+       "type": "hide",
+       "item": "line4"
+      },
+      {
+       "id": "b297",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 4,
+       "actions": [
+        {
+         "id": "b295",
+         "type": "show",
+         "item": "who4"
+        },
+        {
+         "id": "b296",
+         "type": "show",
+         "item": "line4"
+        }
+       ]
+      },
+      {
+       "id": "b298",
+       "type": "hide",
+       "item": "who5"
+      },
+      {
+       "id": "b299",
+       "type": "hide",
+       "item": "line5"
+      },
+      {
+       "id": "b302",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 5,
+       "actions": [
+        {
+         "id": "b300",
+         "type": "show",
+         "item": "who5"
+        },
+        {
+         "id": "b301",
+         "type": "show",
+         "item": "line5"
+        }
+       ]
+      },
+      {
+       "id": "b303",
+       "type": "hide",
+       "item": "who6"
+      },
+      {
+       "id": "b304",
+       "type": "hide",
+       "item": "line6"
+      },
+      {
+       "id": "b307",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 6,
+       "actions": [
+        {
+         "id": "b305",
+         "type": "show",
+         "item": "who6"
+        },
+        {
+         "id": "b306",
+         "type": "show",
+         "item": "line6"
+        }
+       ]
+      },
+      {
+       "id": "b308",
+       "type": "hide",
+       "item": "who7"
+      },
+      {
+       "id": "b309",
+       "type": "hide",
+       "item": "line7"
+      },
+      {
+       "id": "b312",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 7,
+       "actions": [
+        {
+         "id": "b310",
+         "type": "show",
+         "item": "who7"
+        },
+        {
+         "id": "b311",
+         "type": "show",
+         "item": "line7"
+        }
+       ]
+      },
+      {
+       "id": "b313",
+       "type": "hide",
+       "item": "talk"
+      },
+      {
+       "id": "b316",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b315",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "mira",
+         "comparison": "lessOrEqual",
+         "value": 170,
+         "actions": [
+          {
+           "id": "b314",
+           "type": "show",
+           "item": "talk"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b319",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "notEqual",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b318",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "mira",
+         "comparison": "greater",
+         "value": 260,
+         "actions": [
+          {
+           "id": "b317",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 0
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b354",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b350",
+       "type": "setVariable",
+       "variable": "consumed",
+       "value": 0
+      },
+      {
+       "id": "b352",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b351",
+         "type": "setVariable",
+         "variable": "consumed",
+         "value": 1
+        },
+        {
+         "id": "b337",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "mira",
+         "comparison": "lessOrEqual",
+         "value": 170,
+         "actions": [
+          {
+           "id": "b321",
+           "type": "playSound",
+           "sound": "talk"
+          },
+          {
+           "id": "b323",
+           "type": "ifVariable",
+           "variable": "quest",
+           "comparison": "equal",
+           "value": 2,
+           "actions": [
+            {
+             "id": "b322",
+             "type": "setVariable",
+             "variable": "dlg",
+             "value": 7
+            }
+           ]
+          },
+          {
+           "id": "b334",
+           "type": "ifVariable",
+           "variable": "quest",
+           "comparison": "equal",
+           "value": 1,
+           "actions": [
+            {
+             "id": "b325",
+             "type": "ifVariable",
+             "variable": "jelly",
+             "comparison": "less",
+             "value": 3,
+             "actions": [
+              {
+               "id": "b324",
+               "type": "setVariable",
+               "variable": "dlg",
+               "value": 5
+              }
+             ]
+            },
+            {
+             "id": "b333",
+             "type": "ifVariable",
+             "variable": "jelly",
+             "comparison": "greaterOrEqual",
+             "value": 3,
+             "actions": [
+              {
+               "id": "b326",
+               "type": "setVariable",
+               "variable": "dlg",
+               "value": 6
+              },
+              {
+               "id": "b327",
+               "type": "setVariable",
+               "variable": "quest",
+               "value": 2
+              },
+              {
+               "id": "b328",
+               "type": "changeVariable",
+               "variable": "jelly",
+               "value": -3
+              },
+              {
+               "id": "b329",
+               "type": "changeVariable",
+               "variable": "xp",
+               "value": 100
+              },
+              {
+               "id": "b330",
+               "type": "changeVariable",
+               "variable": "gold",
+               "value": 50
+              },
+              {
+               "id": "b331",
+               "type": "changeVariable",
+               "variable": "potion",
+               "value": 1
+              },
+              {
+               "id": "b332",
+               "type": "playSound",
+               "sound": "levelup"
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b336",
+           "type": "ifVariable",
+           "variable": "quest",
+           "comparison": "equal",
+           "value": 0,
+           "actions": [
+            {
+             "id": "b335",
+             "type": "setVariable",
+             "variable": "dlg",
+             "value": 1
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b353",
+       "type": "ifVariable",
+       "variable": "consumed",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b339",
+         "type": "ifVariable",
+         "variable": "dlg",
+         "comparison": "greaterOrEqual",
+         "value": 4,
+         "actions": [
+          {
+           "id": "b338",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 0
+          }
+         ]
+        },
+        {
+         "id": "b343",
+         "type": "ifVariable",
+         "variable": "dlg",
+         "comparison": "equal",
+         "value": 3,
+         "actions": [
+          {
+           "id": "b340",
+           "type": "setVariable",
+           "variable": "quest",
+           "value": 1
+          },
+          {
+           "id": "b341",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 4
+          },
+          {
+           "id": "b342",
+           "type": "playSound",
+           "sound": "pickup"
+          }
+         ]
+        },
+        {
+         "id": "b346",
+         "type": "ifVariable",
+         "variable": "dlg",
+         "comparison": "equal",
+         "value": 2,
+         "actions": [
+          {
+           "id": "b344",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 3
+          },
+          {
+           "id": "b345",
+           "type": "playSound",
+           "sound": "talk"
+          }
+         ]
+        },
+        {
+         "id": "b349",
+         "type": "ifVariable",
+         "variable": "dlg",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b347",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 2
+          },
+          {
+           "id": "b348",
+           "type": "playSound",
+           "sound": "talk"
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "button": "cross"
+    },
+    {
+     "id": "b357",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b356",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 3,
+       "actions": [
+        {
+         "id": "b355",
+         "type": "setVariable",
+         "variable": "dlg",
+         "value": 0
+        }
+       ]
+      }
+     ],
+     "button": "circle"
+    },
+    {
+     "id": "b361",
+     "type": "whenItemsTouch",
+     "actions": [
+      {
+       "id": "b358",
+       "type": "setVariable",
+       "variable": "from",
+       "value": 0
+      },
+      {
+       "id": "b359",
+       "type": "playSound",
+       "sound": "door"
+      },
+      {
+       "id": "b360",
+       "type": "goToScene",
+       "scene": "house"
+      }
+     ],
+     "item": "hero",
+     "otherItem": "door_trigger"
+    },
+    {
+     "id": "b365",
+     "type": "whenItemsTouch",
+     "actions": [
+      {
+       "id": "b362",
+       "type": "setVariable",
+       "variable": "from",
+       "value": 0
+      },
+      {
+       "id": "b363",
+       "type": "playSound",
+       "sound": "door"
+      },
+      {
+       "id": "b364",
+       "type": "goToScene",
+       "scene": "forest"
+      }
+     ],
+     "item": "hero",
+     "otherItem": "gate"
+    }
+   ]
+  },
+  {
+   "scene": "house",
+   "events": [
+    {
+     "id": "b373",
+     "type": "whenGameStarts",
+     "actions": [
+      {
+       "id": "b366",
+       "type": "cameraFollow",
+       "item": "hero"
+      },
+      {
+       "id": "b367",
+       "type": "setVolume",
+       "value": 70
+      },
+      {
+       "id": "b368",
+       "type": "playMusic",
+       "sound": "theme"
+      },
+      {
+       "id": "b369",
+       "type": "setVariable",
+       "variable": "atkCd",
+       "value": 0
+      },
+      {
+       "id": "b370",
+       "type": "setVariable",
+       "variable": "hurtCd",
+       "value": 0
+      },
+      {
+       "id": "b371",
+       "type": "setVariable",
+       "variable": "bag",
+       "value": 0
+      },
+      {
+       "id": "b372",
+       "type": "setVariable",
+       "variable": "dlg",
+       "value": 0
+      },
+      {
+       "id": "b374",
+       "type": "hide",
+       "item": "banner"
+      },
+      {
+       "id": "b375",
+       "type": "hide",
+       "item": "rest"
+      }
+     ]
+    },
+    {
+     "id": "b377",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b376",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 0
+      }
+     ]
+    },
+    {
+     "id": "b380",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b378",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 1
+      },
+      {
+       "id": "b379",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      }
+     ],
+     "button": "moveUp"
+    },
+    {
+     "id": "b383",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b381",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 0
+      },
+      {
+       "id": "b382",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      }
+     ],
+     "button": "moveDown"
+    },
+    {
+     "id": "b387",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b384",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 2
+      },
+      {
+       "id": "b385",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      },
+      {
+       "id": "b386",
+       "type": "flipItem",
+       "item": "hero",
+       "flipped": true
+      }
+     ],
+     "button": "moveLeft"
+    },
+    {
+     "id": "b391",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b388",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 2
+      },
+      {
+       "id": "b389",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      },
+      {
+       "id": "b390",
+       "type": "flipItem",
+       "item": "hero",
+       "flipped": false
+      }
+     ],
+     "button": "moveRight"
+    },
+    {
+     "id": "b407",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b396",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b393",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b392",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkDown"
+          }
+         ]
+        },
+        {
+         "id": "b395",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b394",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleDown"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b401",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b398",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b397",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkUp"
+          }
+         ]
+        },
+        {
+         "id": "b400",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b399",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleUp"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b406",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b403",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b402",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkSide"
+          }
+         ]
+        },
+        {
+         "id": "b405",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b404",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleSide"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b414",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b409",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b408",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 2
+        }
+       ]
+      },
+      {
+       "id": "b411",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b410",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 1
+        }
+       ]
+      },
+      {
+       "id": "b413",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b412",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 0
+        }
+       ]
+      }
+     ],
+     "button": "triangle"
+    },
+    {
+     "id": "b450",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b449",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b448",
+         "type": "ifVariable",
+         "variable": "potion",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b415",
+           "type": "changeVariable",
+           "variable": "potion",
+           "value": -1
+          },
+          {
+           "id": "b416",
+           "type": "changeVariable",
+           "variable": "hp",
+           "value": 5
+          },
+          {
+           "id": "b417",
+           "type": "playSound",
+           "sound": "pickup"
+          },
+          {
+           "id": "b420",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 1,
+           "actions": [
+            {
+             "id": "b419",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 10,
+             "actions": [
+              {
+               "id": "b418",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 10
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b423",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 2,
+           "actions": [
+            {
+             "id": "b422",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 12,
+             "actions": [
+              {
+               "id": "b421",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 12
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b426",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 3,
+           "actions": [
+            {
+             "id": "b425",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 14,
+             "actions": [
+              {
+               "id": "b424",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 14
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b429",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 4,
+           "actions": [
+            {
+             "id": "b428",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 16,
+             "actions": [
+              {
+               "id": "b427",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 16
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b432",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 5,
+           "actions": [
+            {
+             "id": "b431",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 18,
+             "actions": [
+              {
+               "id": "b430",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 18
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b435",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 6,
+           "actions": [
+            {
+             "id": "b434",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 20,
+             "actions": [
+              {
+               "id": "b433",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 20
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b438",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 7,
+           "actions": [
+            {
+             "id": "b437",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 22,
+             "actions": [
+              {
+               "id": "b436",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 22
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b441",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 8,
+           "actions": [
+            {
+             "id": "b440",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 24,
+             "actions": [
+              {
+               "id": "b439",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 24
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b444",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 9,
+           "actions": [
+            {
+             "id": "b443",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 26,
+             "actions": [
+              {
+               "id": "b442",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 26
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b447",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 10,
+           "actions": [
+            {
+             "id": "b446",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 28,
+             "actions": [
+              {
+               "id": "b445",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 28
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "button": "circle"
+    },
+    {
+     "id": "b559",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b462",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b461",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 100,
+         "actions": [
+          {
+           "id": "b451",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -100
+          },
+          {
+           "id": "b452",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 2
+          },
+          {
+           "id": "b453",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 200
+          },
+          {
+           "id": "b454",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 12
+          },
+          {
+           "id": "b455",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 12
+          },
+          {
+           "id": "b456",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 2
+          },
+          {
+           "id": "b457",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b458",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b459",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b460",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b474",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b473",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 200,
+         "actions": [
+          {
+           "id": "b463",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -200
+          },
+          {
+           "id": "b464",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 3
+          },
+          {
+           "id": "b465",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 300
+          },
+          {
+           "id": "b466",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 14
+          },
+          {
+           "id": "b467",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 14
+          },
+          {
+           "id": "b468",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b469",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b470",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b471",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b472",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b486",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 3,
+       "actions": [
+        {
+         "id": "b485",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 300,
+         "actions": [
+          {
+           "id": "b475",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -300
+          },
+          {
+           "id": "b476",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 4
+          },
+          {
+           "id": "b477",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 400
+          },
+          {
+           "id": "b478",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 16
+          },
+          {
+           "id": "b479",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 16
+          },
+          {
+           "id": "b480",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b481",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b482",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b483",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b484",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b498",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 4,
+       "actions": [
+        {
+         "id": "b497",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 400,
+         "actions": [
+          {
+           "id": "b487",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -400
+          },
+          {
+           "id": "b488",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 5
+          },
+          {
+           "id": "b489",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 500
+          },
+          {
+           "id": "b490",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 18
+          },
+          {
+           "id": "b491",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 18
+          },
+          {
+           "id": "b492",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b493",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b494",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b495",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b496",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b510",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 5,
+       "actions": [
+        {
+         "id": "b509",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 500,
+         "actions": [
+          {
+           "id": "b499",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -500
+          },
+          {
+           "id": "b500",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 6
+          },
+          {
+           "id": "b501",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 600
+          },
+          {
+           "id": "b502",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 20
+          },
+          {
+           "id": "b503",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 20
+          },
+          {
+           "id": "b504",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b505",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b506",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b507",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b508",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b522",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 6,
+       "actions": [
+        {
+         "id": "b521",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 600,
+         "actions": [
+          {
+           "id": "b511",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -600
+          },
+          {
+           "id": "b512",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 7
+          },
+          {
+           "id": "b513",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 700
+          },
+          {
+           "id": "b514",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 22
+          },
+          {
+           "id": "b515",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 22
+          },
+          {
+           "id": "b516",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b517",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b518",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b519",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b520",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b534",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 7,
+       "actions": [
+        {
+         "id": "b533",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 700,
+         "actions": [
+          {
+           "id": "b523",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -700
+          },
+          {
+           "id": "b524",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 8
+          },
+          {
+           "id": "b525",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 800
+          },
+          {
+           "id": "b526",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 24
+          },
+          {
+           "id": "b527",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 24
+          },
+          {
+           "id": "b528",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b529",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b530",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b531",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b532",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b546",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 8,
+       "actions": [
+        {
+         "id": "b545",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 800,
+         "actions": [
+          {
+           "id": "b535",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -800
+          },
+          {
+           "id": "b536",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 9
+          },
+          {
+           "id": "b537",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 900
+          },
+          {
+           "id": "b538",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 26
+          },
+          {
+           "id": "b539",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 26
+          },
+          {
+           "id": "b540",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b541",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b542",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b543",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b544",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b558",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 9,
+       "actions": [
+        {
+         "id": "b557",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 900,
+         "actions": [
+          {
+           "id": "b547",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -900
+          },
+          {
+           "id": "b548",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 10
+          },
+          {
+           "id": "b549",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 1000
+          },
+          {
+           "id": "b550",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 28
+          },
+          {
+           "id": "b551",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 28
+          },
+          {
+           "id": "b552",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b553",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b554",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b555",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b556",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b632",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b561",
+       "type": "ifVariable",
+       "variable": "bannerT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b560",
+         "type": "changeVariable",
+         "variable": "bannerT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b563",
+       "type": "ifVariable",
+       "variable": "faintT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b562",
+         "type": "changeVariable",
+         "variable": "faintT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b565",
+       "type": "ifVariable",
+       "variable": "restT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b564",
+         "type": "changeVariable",
+         "variable": "restT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b566",
+       "type": "hide",
+       "item": "banner"
+      },
+      {
+       "id": "b568",
+       "type": "ifVariable",
+       "variable": "bannerT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b567",
+         "type": "show",
+         "item": "banner"
+        }
+       ]
+      },
+      {
+       "id": "b569",
+       "type": "hide",
+       "item": "faint"
+      },
+      {
+       "id": "b571",
+       "type": "ifVariable",
+       "variable": "faintT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b570",
+         "type": "show",
+         "item": "faint"
+        }
+       ]
+      },
+      {
+       "id": "b572",
+       "type": "hide",
+       "item": "bag"
+      },
+      {
+       "id": "b573",
+       "type": "hide",
+       "item": "bag_s1"
+      },
+      {
+       "id": "b574",
+       "type": "hide",
+       "item": "bag_s2"
+      },
+      {
+       "id": "b575",
+       "type": "hide",
+       "item": "bag_s3"
+      },
+      {
+       "id": "b576",
+       "type": "hide",
+       "item": "bag_i1"
+      },
+      {
+       "id": "b577",
+       "type": "hide",
+       "item": "bag_i2"
+      },
+      {
+       "id": "b578",
+       "type": "hide",
+       "item": "bag_i3"
+      },
+      {
+       "id": "b579",
+       "type": "hide",
+       "item": "bag_t"
+      },
+      {
+       "id": "b580",
+       "type": "hide",
+       "item": "bag_n1"
+      },
+      {
+       "id": "b581",
+       "type": "hide",
+       "item": "bag_c1"
+      },
+      {
+       "id": "b582",
+       "type": "hide",
+       "item": "bag_n2"
+      },
+      {
+       "id": "b583",
+       "type": "hide",
+       "item": "bag_c2"
+      },
+      {
+       "id": "b584",
+       "type": "hide",
+       "item": "bag_n3"
+      },
+      {
+       "id": "b585",
+       "type": "hide",
+       "item": "bag_c3"
+      },
+      {
+       "id": "b586",
+       "type": "hide",
+       "item": "bag_a"
+      },
+      {
+       "id": "b587",
+       "type": "hide",
+       "item": "bag_l"
+      },
+      {
+       "id": "b588",
+       "type": "hide",
+       "item": "bag_f"
+      },
+      {
+       "id": "b606",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b589",
+         "type": "show",
+         "item": "bag"
+        },
+        {
+         "id": "b590",
+         "type": "show",
+         "item": "bag_s1"
+        },
+        {
+         "id": "b591",
+         "type": "show",
+         "item": "bag_s2"
+        },
+        {
+         "id": "b592",
+         "type": "show",
+         "item": "bag_s3"
+        },
+        {
+         "id": "b593",
+         "type": "show",
+         "item": "bag_i1"
+        },
+        {
+         "id": "b594",
+         "type": "show",
+         "item": "bag_i2"
+        },
+        {
+         "id": "b595",
+         "type": "show",
+         "item": "bag_i3"
+        },
+        {
+         "id": "b596",
+         "type": "show",
+         "item": "bag_t"
+        },
+        {
+         "id": "b597",
+         "type": "show",
+         "item": "bag_n1"
+        },
+        {
+         "id": "b598",
+         "type": "show",
+         "item": "bag_c1"
+        },
+        {
+         "id": "b599",
+         "type": "show",
+         "item": "bag_n2"
+        },
+        {
+         "id": "b600",
+         "type": "show",
+         "item": "bag_c2"
+        },
+        {
+         "id": "b601",
+         "type": "show",
+         "item": "bag_n3"
+        },
+        {
+         "id": "b602",
+         "type": "show",
+         "item": "bag_c3"
+        },
+        {
+         "id": "b603",
+         "type": "show",
+         "item": "bag_a"
+        },
+        {
+         "id": "b604",
+         "type": "show",
+         "item": "bag_l"
+        },
+        {
+         "id": "b605",
+         "type": "show",
+         "item": "bag_f"
+        }
+       ]
+      },
+      {
+       "id": "b607",
+       "type": "hide",
+       "item": "quest_panel"
+      },
+      {
+       "id": "b608",
+       "type": "hide",
+       "item": "quest_icon"
+      },
+      {
+       "id": "b609",
+       "type": "hide",
+       "item": "quest_text"
+      },
+      {
+       "id": "b613",
+       "type": "ifVariable",
+       "variable": "quest",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b610",
+         "type": "show",
+         "item": "quest_panel"
+        },
+        {
+         "id": "b611",
+         "type": "show",
+         "item": "quest_icon"
+        },
+        {
+         "id": "b612",
+         "type": "show",
+         "item": "quest_text"
+        }
+       ]
+      },
+      {
+       "id": "b614",
+       "type": "hide",
+       "item": "bag_q0"
+      },
+      {
+       "id": "b616",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b615",
+         "type": "show",
+         "item": "bag_q0"
+        }
+       ]
+      },
+      {
+       "id": "b617",
+       "type": "hide",
+       "item": "bag_q1"
+      },
+      {
+       "id": "b619",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b618",
+         "type": "show",
+         "item": "bag_q1"
+        }
+       ]
+      },
+      {
+       "id": "b620",
+       "type": "hide",
+       "item": "bag_q2"
+      },
+      {
+       "id": "b622",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b621",
+         "type": "show",
+         "item": "bag_q2"
+        }
+       ]
+      },
+      {
+       "id": "b624",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "notEqual",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b623",
+         "type": "setVariable",
+         "variable": "qshow",
+         "value": 9
+        }
+       ]
+      },
+      {
+       "id": "b631",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b626",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b625",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 0
+          }
+         ]
+        },
+        {
+         "id": "b628",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b627",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 1
+          }
+         ]
+        },
+        {
+         "id": "b630",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 2,
+         "actions": [
+          {
+           "id": "b629",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 2
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b650",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b633",
+       "type": "hide",
+       "item": "dlg_panel"
+      },
+      {
+       "id": "b634",
+       "type": "hide",
+       "item": "dlg_x"
+      },
+      {
+       "id": "b637",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "notEqual",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b635",
+         "type": "show",
+         "item": "dlg_panel"
+        },
+        {
+         "id": "b636",
+         "type": "show",
+         "item": "dlg_x"
+        }
+       ]
+      },
+      {
+       "id": "b638",
+       "type": "hide",
+       "item": "who1"
+      },
+      {
+       "id": "b639",
+       "type": "hide",
+       "item": "line1"
+      },
+      {
+       "id": "b642",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b640",
+         "type": "show",
+         "item": "who1"
+        },
+        {
+         "id": "b641",
+         "type": "show",
+         "item": "line1"
+        }
+       ]
+      },
+      {
+       "id": "b643",
+       "type": "hide",
+       "item": "talk"
+      },
+      {
+       "id": "b646",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b645",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "tobin",
+         "comparison": "lessOrEqual",
+         "value": 170,
+         "actions": [
+          {
+           "id": "b644",
+           "type": "show",
+           "item": "talk"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b649",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "notEqual",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b648",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "tobin",
+         "comparison": "greater",
+         "value": 260,
+         "actions": [
+          {
+           "id": "b647",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 0
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b657",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b651",
+       "type": "hide",
+       "item": "sleep"
+      },
+      {
+       "id": "b653",
+       "type": "ifItemDistance",
+       "item": "hero",
+       "otherItem": "bedspot",
+       "comparison": "lessOrEqual",
+       "value": 140,
+       "actions": [
+        {
+         "id": "b652",
+         "type": "show",
+         "item": "sleep"
+        }
+       ]
+      },
+      {
+       "id": "b654",
+       "type": "hide",
+       "item": "rest"
+      },
+      {
+       "id": "b656",
+       "type": "ifVariable",
+       "variable": "restT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b655",
+         "type": "show",
+         "item": "rest"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b691",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b658",
+       "type": "setVariable",
+       "variable": "consumed",
+       "value": 0
+      },
+      {
+       "id": "b661",
+       "type": "ifVariable",
+       "variable": "dlg",
+       "comparison": "notEqual",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b659",
+         "type": "setVariable",
+         "variable": "dlg",
+         "value": 0
+        },
+        {
+         "id": "b660",
+         "type": "setVariable",
+         "variable": "consumed",
+         "value": 1
+        }
+       ]
+      },
+      {
+       "id": "b666",
+       "type": "ifVariable",
+       "variable": "consumed",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b665",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "tobin",
+         "comparison": "lessOrEqual",
+         "value": 170,
+         "actions": [
+          {
+           "id": "b662",
+           "type": "setVariable",
+           "variable": "dlg",
+           "value": 1
+          },
+          {
+           "id": "b663",
+           "type": "setVariable",
+           "variable": "consumed",
+           "value": 1
+          },
+          {
+           "id": "b664",
+           "type": "playSound",
+           "sound": "talk"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b690",
+       "type": "ifVariable",
+       "variable": "consumed",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b689",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "bedspot",
+         "comparison": "lessOrEqual",
+         "value": 140,
+         "actions": [
+          {
+           "id": "b668",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 1,
+           "actions": [
+            {
+             "id": "b667",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 10
+            }
+           ]
+          },
+          {
+           "id": "b670",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 2,
+           "actions": [
+            {
+             "id": "b669",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 12
+            }
+           ]
+          },
+          {
+           "id": "b672",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 3,
+           "actions": [
+            {
+             "id": "b671",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 14
+            }
+           ]
+          },
+          {
+           "id": "b674",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 4,
+           "actions": [
+            {
+             "id": "b673",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 16
+            }
+           ]
+          },
+          {
+           "id": "b676",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 5,
+           "actions": [
+            {
+             "id": "b675",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 18
+            }
+           ]
+          },
+          {
+           "id": "b678",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 6,
+           "actions": [
+            {
+             "id": "b677",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 20
+            }
+           ]
+          },
+          {
+           "id": "b680",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 7,
+           "actions": [
+            {
+             "id": "b679",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 22
+            }
+           ]
+          },
+          {
+           "id": "b682",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 8,
+           "actions": [
+            {
+             "id": "b681",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 24
+            }
+           ]
+          },
+          {
+           "id": "b684",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 9,
+           "actions": [
+            {
+             "id": "b683",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 26
+            }
+           ]
+          },
+          {
+           "id": "b686",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 10,
+           "actions": [
+            {
+             "id": "b685",
+             "type": "setVariable",
+             "variable": "hp",
+             "value": 28
+            }
+           ]
+          },
+          {
+           "id": "b687",
+           "type": "setVariable",
+           "variable": "restT",
+           "value": 150
+          },
+          {
+           "id": "b688",
+           "type": "playSound",
+           "sound": "levelup"
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "button": "cross"
+    },
+    {
+     "id": "b695",
+     "type": "whenItemsTouch",
+     "actions": [
+      {
+       "id": "b692",
+       "type": "setVariable",
+       "variable": "from",
+       "value": 1
+      },
+      {
+       "id": "b693",
+       "type": "playSound",
+       "sound": "door"
+      },
+      {
+       "id": "b694",
+       "type": "goToScene",
+       "scene": "village"
+      }
+     ],
+     "item": "hero",
+     "otherItem": "exit"
+    }
+   ]
+  },
+  {
+   "scene": "forest",
+   "events": [
+    {
+     "id": "b703",
+     "type": "whenGameStarts",
+     "actions": [
+      {
+       "id": "b696",
+       "type": "cameraFollow",
+       "item": "hero"
+      },
+      {
+       "id": "b697",
+       "type": "setVolume",
+       "value": 70
+      },
+      {
+       "id": "b698",
+       "type": "playMusic",
+       "sound": "theme"
+      },
+      {
+       "id": "b699",
+       "type": "setVariable",
+       "variable": "atkCd",
+       "value": 0
+      },
+      {
+       "id": "b700",
+       "type": "setVariable",
+       "variable": "hurtCd",
+       "value": 0
+      },
+      {
+       "id": "b701",
+       "type": "setVariable",
+       "variable": "bag",
+       "value": 0
+      },
+      {
+       "id": "b702",
+       "type": "setVariable",
+       "variable": "dlg",
+       "value": 0
+      },
+      {
+       "id": "b704",
+       "type": "hide",
+       "item": "banner"
+      },
+      {
+       "id": "b705",
+       "type": "hide",
+       "item": "slash"
+      },
+      {
+       "id": "b706",
+       "type": "setVariable",
+       "variable": "tick",
+       "value": 0
+      },
+      {
+       "id": "b707",
+       "type": "setVariable",
+       "variable": "s1",
+       "value": 3
+      },
+      {
+       "id": "b708",
+       "type": "setVariable",
+       "variable": "r1",
+       "value": 0
+      },
+      {
+       "id": "b709",
+       "type": "setVariable",
+       "variable": "d1",
+       "value": 0
+      },
+      {
+       "id": "b710",
+       "type": "hide",
+       "item": "drop1"
+      },
+      {
+       "id": "b711",
+       "type": "setVariable",
+       "variable": "s2",
+       "value": 3
+      },
+      {
+       "id": "b712",
+       "type": "setVariable",
+       "variable": "r2",
+       "value": 0
+      },
+      {
+       "id": "b713",
+       "type": "setVariable",
+       "variable": "d2",
+       "value": 0
+      },
+      {
+       "id": "b714",
+       "type": "hide",
+       "item": "drop2"
+      },
+      {
+       "id": "b715",
+       "type": "setVariable",
+       "variable": "s3",
+       "value": 3
+      },
+      {
+       "id": "b716",
+       "type": "setVariable",
+       "variable": "r3",
+       "value": 0
+      },
+      {
+       "id": "b717",
+       "type": "setVariable",
+       "variable": "d3",
+       "value": 0
+      },
+      {
+       "id": "b718",
+       "type": "hide",
+       "item": "drop3"
+      },
+      {
+       "id": "b719",
+       "type": "setVariable",
+       "variable": "s4",
+       "value": 3
+      },
+      {
+       "id": "b720",
+       "type": "setVariable",
+       "variable": "r4",
+       "value": 0
+      },
+      {
+       "id": "b721",
+       "type": "setVariable",
+       "variable": "d4",
+       "value": 0
+      },
+      {
+       "id": "b722",
+       "type": "hide",
+       "item": "drop4"
+      }
+     ]
+    },
+    {
+     "id": "b724",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b723",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 0
+      }
+     ]
+    },
+    {
+     "id": "b727",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b725",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 1
+      },
+      {
+       "id": "b726",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      }
+     ],
+     "button": "moveUp"
+    },
+    {
+     "id": "b730",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b728",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 0
+      },
+      {
+       "id": "b729",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      }
+     ],
+     "button": "moveDown"
+    },
+    {
+     "id": "b734",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b731",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 2
+      },
+      {
+       "id": "b732",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      },
+      {
+       "id": "b733",
+       "type": "flipItem",
+       "item": "hero",
+       "flipped": true
+      }
+     ],
+     "button": "moveLeft"
+    },
+    {
+     "id": "b738",
+     "type": "whileButtonHeld",
+     "actions": [
+      {
+       "id": "b735",
+       "type": "setVariable",
+       "variable": "facing",
+       "value": 2
+      },
+      {
+       "id": "b736",
+       "type": "setVariable",
+       "variable": "moving",
+       "value": 1
+      },
+      {
+       "id": "b737",
+       "type": "flipItem",
+       "item": "hero",
+       "flipped": false
+      }
+     ],
+     "button": "moveRight"
+    },
+    {
+     "id": "b754",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b743",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b740",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b739",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkDown"
+          }
+         ]
+        },
+        {
+         "id": "b742",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b741",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleDown"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b748",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b745",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b744",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkUp"
+          }
+         ]
+        },
+        {
+         "id": "b747",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b746",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleUp"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b753",
+       "type": "ifVariable",
+       "variable": "facing",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b750",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b749",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "walkSide"
+          }
+         ]
+        },
+        {
+         "id": "b752",
+         "type": "ifVariable",
+         "variable": "moving",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b751",
+           "type": "playAnimation",
+           "item": "hero",
+           "animation": "idleSide"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b761",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b756",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b755",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 2
+        }
+       ]
+      },
+      {
+       "id": "b758",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b757",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 1
+        }
+       ]
+      },
+      {
+       "id": "b760",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b759",
+         "type": "setVariable",
+         "variable": "bag",
+         "value": 0
+        }
+       ]
+      }
+     ],
+     "button": "triangle"
+    },
+    {
+     "id": "b797",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b796",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b795",
+         "type": "ifVariable",
+         "variable": "potion",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b762",
+           "type": "changeVariable",
+           "variable": "potion",
+           "value": -1
+          },
+          {
+           "id": "b763",
+           "type": "changeVariable",
+           "variable": "hp",
+           "value": 5
+          },
+          {
+           "id": "b764",
+           "type": "playSound",
+           "sound": "pickup"
+          },
+          {
+           "id": "b767",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 1,
+           "actions": [
+            {
+             "id": "b766",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 10,
+             "actions": [
+              {
+               "id": "b765",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 10
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b770",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 2,
+           "actions": [
+            {
+             "id": "b769",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 12,
+             "actions": [
+              {
+               "id": "b768",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 12
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b773",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 3,
+           "actions": [
+            {
+             "id": "b772",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 14,
+             "actions": [
+              {
+               "id": "b771",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 14
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b776",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 4,
+           "actions": [
+            {
+             "id": "b775",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 16,
+             "actions": [
+              {
+               "id": "b774",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 16
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b779",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 5,
+           "actions": [
+            {
+             "id": "b778",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 18,
+             "actions": [
+              {
+               "id": "b777",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 18
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b782",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 6,
+           "actions": [
+            {
+             "id": "b781",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 20,
+             "actions": [
+              {
+               "id": "b780",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 20
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b785",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 7,
+           "actions": [
+            {
+             "id": "b784",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 22,
+             "actions": [
+              {
+               "id": "b783",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 22
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b788",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 8,
+           "actions": [
+            {
+             "id": "b787",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 24,
+             "actions": [
+              {
+               "id": "b786",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 24
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b791",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 9,
+           "actions": [
+            {
+             "id": "b790",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 26,
+             "actions": [
+              {
+               "id": "b789",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 26
+              }
+             ]
+            }
+           ]
+          },
+          {
+           "id": "b794",
+           "type": "ifVariable",
+           "variable": "level",
+           "comparison": "equal",
+           "value": 10,
+           "actions": [
+            {
+             "id": "b793",
+             "type": "ifVariable",
+             "variable": "hp",
+             "comparison": "greater",
+             "value": 28,
+             "actions": [
+              {
+               "id": "b792",
+               "type": "setVariable",
+               "variable": "hp",
+               "value": 28
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "button": "circle"
+    },
+    {
+     "id": "b906",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b809",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b808",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 100,
+         "actions": [
+          {
+           "id": "b798",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -100
+          },
+          {
+           "id": "b799",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 2
+          },
+          {
+           "id": "b800",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 200
+          },
+          {
+           "id": "b801",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 12
+          },
+          {
+           "id": "b802",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 12
+          },
+          {
+           "id": "b803",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 2
+          },
+          {
+           "id": "b804",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b805",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b806",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b807",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b821",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b820",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 200,
+         "actions": [
+          {
+           "id": "b810",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -200
+          },
+          {
+           "id": "b811",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 3
+          },
+          {
+           "id": "b812",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 300
+          },
+          {
+           "id": "b813",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 14
+          },
+          {
+           "id": "b814",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 14
+          },
+          {
+           "id": "b815",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b816",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b817",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b818",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b819",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b833",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 3,
+       "actions": [
+        {
+         "id": "b832",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 300,
+         "actions": [
+          {
+           "id": "b822",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -300
+          },
+          {
+           "id": "b823",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 4
+          },
+          {
+           "id": "b824",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 400
+          },
+          {
+           "id": "b825",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 16
+          },
+          {
+           "id": "b826",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 16
+          },
+          {
+           "id": "b827",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b828",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b829",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b830",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b831",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b845",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 4,
+       "actions": [
+        {
+         "id": "b844",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 400,
+         "actions": [
+          {
+           "id": "b834",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -400
+          },
+          {
+           "id": "b835",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 5
+          },
+          {
+           "id": "b836",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 500
+          },
+          {
+           "id": "b837",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 18
+          },
+          {
+           "id": "b838",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 18
+          },
+          {
+           "id": "b839",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b840",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b841",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b842",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b843",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b857",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 5,
+       "actions": [
+        {
+         "id": "b856",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 500,
+         "actions": [
+          {
+           "id": "b846",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -500
+          },
+          {
+           "id": "b847",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 6
+          },
+          {
+           "id": "b848",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 600
+          },
+          {
+           "id": "b849",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 20
+          },
+          {
+           "id": "b850",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 20
+          },
+          {
+           "id": "b851",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b852",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b853",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b854",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b855",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b869",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 6,
+       "actions": [
+        {
+         "id": "b868",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 600,
+         "actions": [
+          {
+           "id": "b858",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -600
+          },
+          {
+           "id": "b859",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 7
+          },
+          {
+           "id": "b860",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 700
+          },
+          {
+           "id": "b861",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 22
+          },
+          {
+           "id": "b862",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 22
+          },
+          {
+           "id": "b863",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b864",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b865",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b866",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b867",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b881",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 7,
+       "actions": [
+        {
+         "id": "b880",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 700,
+         "actions": [
+          {
+           "id": "b870",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -700
+          },
+          {
+           "id": "b871",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 8
+          },
+          {
+           "id": "b872",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 800
+          },
+          {
+           "id": "b873",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 24
+          },
+          {
+           "id": "b874",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 24
+          },
+          {
+           "id": "b875",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b876",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b877",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b878",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b879",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b893",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 8,
+       "actions": [
+        {
+         "id": "b892",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 800,
+         "actions": [
+          {
+           "id": "b882",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -800
+          },
+          {
+           "id": "b883",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 9
+          },
+          {
+           "id": "b884",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 900
+          },
+          {
+           "id": "b885",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 26
+          },
+          {
+           "id": "b886",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 26
+          },
+          {
+           "id": "b887",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b888",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b889",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b890",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b891",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b905",
+       "type": "ifVariable",
+       "variable": "level",
+       "comparison": "equal",
+       "value": 9,
+       "actions": [
+        {
+         "id": "b904",
+         "type": "ifVariable",
+         "variable": "xp",
+         "comparison": "greaterOrEqual",
+         "value": 900,
+         "actions": [
+          {
+           "id": "b894",
+           "type": "changeVariable",
+           "variable": "xp",
+           "value": -900
+          },
+          {
+           "id": "b895",
+           "type": "setVariable",
+           "variable": "level",
+           "value": 10
+          },
+          {
+           "id": "b896",
+           "type": "setVariable",
+           "variable": "xpNeed",
+           "value": 1000
+          },
+          {
+           "id": "b897",
+           "type": "setVariable",
+           "variable": "maxHp",
+           "value": 28
+          },
+          {
+           "id": "b898",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 28
+          },
+          {
+           "id": "b899",
+           "type": "setVariable",
+           "variable": "atk",
+           "value": 3
+          },
+          {
+           "id": "b900",
+           "type": "setVariable",
+           "variable": "bannerT",
+           "value": 150
+          },
+          {
+           "id": "b901",
+           "type": "playSound",
+           "sound": "levelup"
+          },
+          {
+           "id": "b902",
+           "type": "putAtItem",
+           "item": "levelfx",
+           "otherItem": "hero",
+           "x": -228,
+           "y": -228
+          },
+          {
+           "id": "b903",
+           "type": "burstParticles",
+           "item": "levelfx"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b979",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b908",
+       "type": "ifVariable",
+       "variable": "bannerT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b907",
+         "type": "changeVariable",
+         "variable": "bannerT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b910",
+       "type": "ifVariable",
+       "variable": "faintT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b909",
+         "type": "changeVariable",
+         "variable": "faintT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b912",
+       "type": "ifVariable",
+       "variable": "restT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b911",
+         "type": "changeVariable",
+         "variable": "restT",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b913",
+       "type": "hide",
+       "item": "banner"
+      },
+      {
+       "id": "b915",
+       "type": "ifVariable",
+       "variable": "bannerT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b914",
+         "type": "show",
+         "item": "banner"
+        }
+       ]
+      },
+      {
+       "id": "b916",
+       "type": "hide",
+       "item": "faint"
+      },
+      {
+       "id": "b918",
+       "type": "ifVariable",
+       "variable": "faintT",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b917",
+         "type": "show",
+         "item": "faint"
+        }
+       ]
+      },
+      {
+       "id": "b919",
+       "type": "hide",
+       "item": "bag"
+      },
+      {
+       "id": "b920",
+       "type": "hide",
+       "item": "bag_s1"
+      },
+      {
+       "id": "b921",
+       "type": "hide",
+       "item": "bag_s2"
+      },
+      {
+       "id": "b922",
+       "type": "hide",
+       "item": "bag_s3"
+      },
+      {
+       "id": "b923",
+       "type": "hide",
+       "item": "bag_i1"
+      },
+      {
+       "id": "b924",
+       "type": "hide",
+       "item": "bag_i2"
+      },
+      {
+       "id": "b925",
+       "type": "hide",
+       "item": "bag_i3"
+      },
+      {
+       "id": "b926",
+       "type": "hide",
+       "item": "bag_t"
+      },
+      {
+       "id": "b927",
+       "type": "hide",
+       "item": "bag_n1"
+      },
+      {
+       "id": "b928",
+       "type": "hide",
+       "item": "bag_c1"
+      },
+      {
+       "id": "b929",
+       "type": "hide",
+       "item": "bag_n2"
+      },
+      {
+       "id": "b930",
+       "type": "hide",
+       "item": "bag_c2"
+      },
+      {
+       "id": "b931",
+       "type": "hide",
+       "item": "bag_n3"
+      },
+      {
+       "id": "b932",
+       "type": "hide",
+       "item": "bag_c3"
+      },
+      {
+       "id": "b933",
+       "type": "hide",
+       "item": "bag_a"
+      },
+      {
+       "id": "b934",
+       "type": "hide",
+       "item": "bag_l"
+      },
+      {
+       "id": "b935",
+       "type": "hide",
+       "item": "bag_f"
+      },
+      {
+       "id": "b953",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b936",
+         "type": "show",
+         "item": "bag"
+        },
+        {
+         "id": "b937",
+         "type": "show",
+         "item": "bag_s1"
+        },
+        {
+         "id": "b938",
+         "type": "show",
+         "item": "bag_s2"
+        },
+        {
+         "id": "b939",
+         "type": "show",
+         "item": "bag_s3"
+        },
+        {
+         "id": "b940",
+         "type": "show",
+         "item": "bag_i1"
+        },
+        {
+         "id": "b941",
+         "type": "show",
+         "item": "bag_i2"
+        },
+        {
+         "id": "b942",
+         "type": "show",
+         "item": "bag_i3"
+        },
+        {
+         "id": "b943",
+         "type": "show",
+         "item": "bag_t"
+        },
+        {
+         "id": "b944",
+         "type": "show",
+         "item": "bag_n1"
+        },
+        {
+         "id": "b945",
+         "type": "show",
+         "item": "bag_c1"
+        },
+        {
+         "id": "b946",
+         "type": "show",
+         "item": "bag_n2"
+        },
+        {
+         "id": "b947",
+         "type": "show",
+         "item": "bag_c2"
+        },
+        {
+         "id": "b948",
+         "type": "show",
+         "item": "bag_n3"
+        },
+        {
+         "id": "b949",
+         "type": "show",
+         "item": "bag_c3"
+        },
+        {
+         "id": "b950",
+         "type": "show",
+         "item": "bag_a"
+        },
+        {
+         "id": "b951",
+         "type": "show",
+         "item": "bag_l"
+        },
+        {
+         "id": "b952",
+         "type": "show",
+         "item": "bag_f"
+        }
+       ]
+      },
+      {
+       "id": "b954",
+       "type": "hide",
+       "item": "quest_panel"
+      },
+      {
+       "id": "b955",
+       "type": "hide",
+       "item": "quest_icon"
+      },
+      {
+       "id": "b956",
+       "type": "hide",
+       "item": "quest_text"
+      },
+      {
+       "id": "b960",
+       "type": "ifVariable",
+       "variable": "quest",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b957",
+         "type": "show",
+         "item": "quest_panel"
+        },
+        {
+         "id": "b958",
+         "type": "show",
+         "item": "quest_icon"
+        },
+        {
+         "id": "b959",
+         "type": "show",
+         "item": "quest_text"
+        }
+       ]
+      },
+      {
+       "id": "b961",
+       "type": "hide",
+       "item": "bag_q0"
+      },
+      {
+       "id": "b963",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b962",
+         "type": "show",
+         "item": "bag_q0"
+        }
+       ]
+      },
+      {
+       "id": "b964",
+       "type": "hide",
+       "item": "bag_q1"
+      },
+      {
+       "id": "b966",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b965",
+         "type": "show",
+         "item": "bag_q1"
+        }
+       ]
+      },
+      {
+       "id": "b967",
+       "type": "hide",
+       "item": "bag_q2"
+      },
+      {
+       "id": "b969",
+       "type": "ifVariable",
+       "variable": "qshow",
+       "comparison": "equal",
+       "value": 2,
+       "actions": [
+        {
+         "id": "b968",
+         "type": "show",
+         "item": "bag_q2"
+        }
+       ]
+      },
+      {
+       "id": "b971",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "notEqual",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b970",
+         "type": "setVariable",
+         "variable": "qshow",
+         "value": 9
+        }
+       ]
+      },
+      {
+       "id": "b978",
+       "type": "ifVariable",
+       "variable": "bag",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b973",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b972",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 0
+          }
+         ]
+        },
+        {
+         "id": "b975",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b974",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 1
+          }
+         ]
+        },
+        {
+         "id": "b977",
+         "type": "ifVariable",
+         "variable": "quest",
+         "comparison": "equal",
+         "value": 2,
+         "actions": [
+          {
+           "id": "b976",
+           "type": "setVariable",
+           "variable": "qshow",
+           "value": 2
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1061",
+     "type": "whenButtonPressed",
+     "actions": [
+      {
+       "id": "b1060",
+       "type": "ifVariable",
+       "variable": "atkCd",
+       "comparison": "equal",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1056",
+         "type": "setVariable",
+         "variable": "atkCd",
+         "value": 22
+        },
+        {
+         "id": "b1057",
+         "type": "putAtItem",
+         "item": "slash",
+         "otherItem": "hero",
+         "x": -64,
+         "y": -64
+        },
+        {
+         "id": "b1058",
+         "type": "show",
+         "item": "slash"
+        },
+        {
+         "id": "b1059",
+         "type": "playSound",
+         "sound": "hit"
+        },
+        {
+         "id": "b998",
+         "type": "ifVariable",
+         "variable": "s1",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b997",
+           "type": "ifItemDistance",
+           "item": "slime1",
+           "otherItem": "hero",
+           "comparison": "lessOrEqual",
+           "value": 150,
+           "actions": [
+            {
+             "id": "b981",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 1,
+             "actions": [
+              {
+               "id": "b980",
+               "type": "changeVariable",
+               "variable": "s1",
+               "value": -1
+              }
+             ]
+            },
+            {
+             "id": "b983",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 2,
+             "actions": [
+              {
+               "id": "b982",
+               "type": "changeVariable",
+               "variable": "s1",
+               "value": -2
+              }
+             ]
+            },
+            {
+             "id": "b985",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "greaterOrEqual",
+             "value": 3,
+             "actions": [
+              {
+               "id": "b984",
+               "type": "changeVariable",
+               "variable": "s1",
+               "value": -3
+              }
+             ]
+            },
+            {
+             "id": "b986",
+             "type": "putAtItem",
+             "item": "hitfx",
+             "otherItem": "slime1",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b987",
+             "type": "burstParticles",
+             "item": "hitfx"
+            },
+            {
+             "id": "b996",
+             "type": "ifVariable",
+             "variable": "s1",
+             "comparison": "lessOrEqual",
+             "value": 0,
+             "actions": [
+              {
+               "id": "b988",
+               "type": "hide",
+               "item": "slime1"
+              },
+              {
+               "id": "b989",
+               "type": "setVelocity",
+               "item": "slime1",
+               "x": 0,
+               "y": 0
+              },
+              {
+               "id": "b990",
+               "type": "putAtItem",
+               "item": "drop1",
+               "otherItem": "slime1",
+               "x": 8,
+               "y": 8
+              },
+              {
+               "id": "b991",
+               "type": "show",
+               "item": "drop1"
+              },
+              {
+               "id": "b992",
+               "type": "setVariable",
+               "variable": "d1",
+               "value": 40
+              },
+              {
+               "id": "b993",
+               "type": "changeVariable",
+               "variable": "xp",
+               "value": 30
+              },
+              {
+               "id": "b994",
+               "type": "setVariable",
+               "variable": "r1",
+               "value": 420
+              },
+              {
+               "id": "b995",
+               "type": "playSound",
+               "sound": "kill"
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1017",
+         "type": "ifVariable",
+         "variable": "s2",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b1016",
+           "type": "ifItemDistance",
+           "item": "slime2",
+           "otherItem": "hero",
+           "comparison": "lessOrEqual",
+           "value": 150,
+           "actions": [
+            {
+             "id": "b1000",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 1,
+             "actions": [
+              {
+               "id": "b999",
+               "type": "changeVariable",
+               "variable": "s2",
+               "value": -1
+              }
+             ]
+            },
+            {
+             "id": "b1002",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 2,
+             "actions": [
+              {
+               "id": "b1001",
+               "type": "changeVariable",
+               "variable": "s2",
+               "value": -2
+              }
+             ]
+            },
+            {
+             "id": "b1004",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "greaterOrEqual",
+             "value": 3,
+             "actions": [
+              {
+               "id": "b1003",
+               "type": "changeVariable",
+               "variable": "s2",
+               "value": -3
+              }
+             ]
+            },
+            {
+             "id": "b1005",
+             "type": "putAtItem",
+             "item": "hitfx",
+             "otherItem": "slime2",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1006",
+             "type": "burstParticles",
+             "item": "hitfx"
+            },
+            {
+             "id": "b1015",
+             "type": "ifVariable",
+             "variable": "s2",
+             "comparison": "lessOrEqual",
+             "value": 0,
+             "actions": [
+              {
+               "id": "b1007",
+               "type": "hide",
+               "item": "slime2"
+              },
+              {
+               "id": "b1008",
+               "type": "setVelocity",
+               "item": "slime2",
+               "x": 0,
+               "y": 0
+              },
+              {
+               "id": "b1009",
+               "type": "putAtItem",
+               "item": "drop2",
+               "otherItem": "slime2",
+               "x": 8,
+               "y": 8
+              },
+              {
+               "id": "b1010",
+               "type": "show",
+               "item": "drop2"
+              },
+              {
+               "id": "b1011",
+               "type": "setVariable",
+               "variable": "d2",
+               "value": 40
+              },
+              {
+               "id": "b1012",
+               "type": "changeVariable",
+               "variable": "xp",
+               "value": 30
+              },
+              {
+               "id": "b1013",
+               "type": "setVariable",
+               "variable": "r2",
+               "value": 420
+              },
+              {
+               "id": "b1014",
+               "type": "playSound",
+               "sound": "kill"
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1036",
+         "type": "ifVariable",
+         "variable": "s3",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b1035",
+           "type": "ifItemDistance",
+           "item": "slime3",
+           "otherItem": "hero",
+           "comparison": "lessOrEqual",
+           "value": 150,
+           "actions": [
+            {
+             "id": "b1019",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 1,
+             "actions": [
+              {
+               "id": "b1018",
+               "type": "changeVariable",
+               "variable": "s3",
+               "value": -1
+              }
+             ]
+            },
+            {
+             "id": "b1021",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 2,
+             "actions": [
+              {
+               "id": "b1020",
+               "type": "changeVariable",
+               "variable": "s3",
+               "value": -2
+              }
+             ]
+            },
+            {
+             "id": "b1023",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "greaterOrEqual",
+             "value": 3,
+             "actions": [
+              {
+               "id": "b1022",
+               "type": "changeVariable",
+               "variable": "s3",
+               "value": -3
+              }
+             ]
+            },
+            {
+             "id": "b1024",
+             "type": "putAtItem",
+             "item": "hitfx",
+             "otherItem": "slime3",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1025",
+             "type": "burstParticles",
+             "item": "hitfx"
+            },
+            {
+             "id": "b1034",
+             "type": "ifVariable",
+             "variable": "s3",
+             "comparison": "lessOrEqual",
+             "value": 0,
+             "actions": [
+              {
+               "id": "b1026",
+               "type": "hide",
+               "item": "slime3"
+              },
+              {
+               "id": "b1027",
+               "type": "setVelocity",
+               "item": "slime3",
+               "x": 0,
+               "y": 0
+              },
+              {
+               "id": "b1028",
+               "type": "putAtItem",
+               "item": "drop3",
+               "otherItem": "slime3",
+               "x": 8,
+               "y": 8
+              },
+              {
+               "id": "b1029",
+               "type": "show",
+               "item": "drop3"
+              },
+              {
+               "id": "b1030",
+               "type": "setVariable",
+               "variable": "d3",
+               "value": 40
+              },
+              {
+               "id": "b1031",
+               "type": "changeVariable",
+               "variable": "xp",
+               "value": 30
+              },
+              {
+               "id": "b1032",
+               "type": "setVariable",
+               "variable": "r3",
+               "value": 420
+              },
+              {
+               "id": "b1033",
+               "type": "playSound",
+               "sound": "kill"
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1055",
+         "type": "ifVariable",
+         "variable": "s4",
+         "comparison": "greater",
+         "value": 0,
+         "actions": [
+          {
+           "id": "b1054",
+           "type": "ifItemDistance",
+           "item": "slime4",
+           "otherItem": "hero",
+           "comparison": "lessOrEqual",
+           "value": 150,
+           "actions": [
+            {
+             "id": "b1038",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 1,
+             "actions": [
+              {
+               "id": "b1037",
+               "type": "changeVariable",
+               "variable": "s4",
+               "value": -1
+              }
+             ]
+            },
+            {
+             "id": "b1040",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "equal",
+             "value": 2,
+             "actions": [
+              {
+               "id": "b1039",
+               "type": "changeVariable",
+               "variable": "s4",
+               "value": -2
+              }
+             ]
+            },
+            {
+             "id": "b1042",
+             "type": "ifVariable",
+             "variable": "atk",
+             "comparison": "greaterOrEqual",
+             "value": 3,
+             "actions": [
+              {
+               "id": "b1041",
+               "type": "changeVariable",
+               "variable": "s4",
+               "value": -3
+              }
+             ]
+            },
+            {
+             "id": "b1043",
+             "type": "putAtItem",
+             "item": "hitfx",
+             "otherItem": "slime4",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1044",
+             "type": "burstParticles",
+             "item": "hitfx"
+            },
+            {
+             "id": "b1053",
+             "type": "ifVariable",
+             "variable": "s4",
+             "comparison": "lessOrEqual",
+             "value": 0,
+             "actions": [
+              {
+               "id": "b1045",
+               "type": "hide",
+               "item": "slime4"
+              },
+              {
+               "id": "b1046",
+               "type": "setVelocity",
+               "item": "slime4",
+               "x": 0,
+               "y": 0
+              },
+              {
+               "id": "b1047",
+               "type": "putAtItem",
+               "item": "drop4",
+               "otherItem": "slime4",
+               "x": 8,
+               "y": 8
+              },
+              {
+               "id": "b1048",
+               "type": "show",
+               "item": "drop4"
+              },
+              {
+               "id": "b1049",
+               "type": "setVariable",
+               "variable": "d4",
+               "value": 40
+              },
+              {
+               "id": "b1050",
+               "type": "changeVariable",
+               "variable": "xp",
+               "value": 30
+              },
+              {
+               "id": "b1051",
+               "type": "setVariable",
+               "variable": "r4",
+               "value": 420
+              },
+              {
+               "id": "b1052",
+               "type": "playSound",
+               "sound": "kill"
+              }
+             ]
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      }
+     ],
+     "button": "square"
+    },
+    {
+     "id": "b1072",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1064",
+       "type": "ifVariable",
+       "variable": "atkCd",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1062",
+         "type": "changeVariable",
+         "variable": "atkCd",
+         "value": -1
+        },
+        {
+         "id": "b1063",
+         "type": "putAtItem",
+         "item": "slash",
+         "otherItem": "hero",
+         "x": -64,
+         "y": -64
+        }
+       ]
+      },
+      {
+       "id": "b1066",
+       "type": "ifVariable",
+       "variable": "atkCd",
+       "comparison": "equal",
+       "value": 10,
+       "actions": [
+        {
+         "id": "b1065",
+         "type": "hide",
+         "item": "slash"
+        }
+       ]
+      },
+      {
+       "id": "b1068",
+       "type": "ifVariable",
+       "variable": "hurtCd",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1067",
+         "type": "changeVariable",
+         "variable": "hurtCd",
+         "value": -1
+        }
+       ]
+      },
+      {
+       "id": "b1069",
+       "type": "changeVariable",
+       "variable": "tick",
+       "value": 1
+      },
+      {
+       "id": "b1071",
+       "type": "ifVariable",
+       "variable": "tick",
+       "comparison": "greaterOrEqual",
+       "value": 240,
+       "actions": [
+        {
+         "id": "b1070",
+         "type": "setVariable",
+         "variable": "tick",
+         "value": 0
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1093",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1087",
+       "type": "ifVariable",
+       "variable": "s1",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1074",
+         "type": "ifItemDistance",
+         "item": "slime1",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1073",
+           "type": "chaseItem",
+           "item": "slime1",
+           "otherItem": "hero",
+           "value": 150
+          }
+         ]
+        },
+        {
+         "id": "b1079",
+         "type": "ifItemDistance",
+         "item": "slime1",
+         "otherItem": "hero",
+         "comparison": "greater",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1076",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "less",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1075",
+             "type": "setVelocity",
+             "item": "slime1",
+             "x": 70,
+             "y": 0
+            }
+           ]
+          },
+          {
+           "id": "b1078",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "greaterOrEqual",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1077",
+             "type": "setVelocity",
+             "item": "slime1",
+             "x": -70,
+             "y": 0
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1086",
+         "type": "ifItemDistance",
+         "item": "slime1",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 72,
+         "actions": [
+          {
+           "id": "b1085",
+           "type": "ifVariable",
+           "variable": "hurtCd",
+           "comparison": "equal",
+           "value": 0,
+           "actions": [
+            {
+             "id": "b1080",
+             "type": "changeVariable",
+             "variable": "hp",
+             "value": -1
+            },
+            {
+             "id": "b1081",
+             "type": "setVariable",
+             "variable": "hurtCd",
+             "value": 50
+            },
+            {
+             "id": "b1082",
+             "type": "playSound",
+             "sound": "hurt"
+            },
+            {
+             "id": "b1083",
+             "type": "putAtItem",
+             "item": "hurtfx",
+             "otherItem": "hero",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1084",
+             "type": "burstParticles",
+             "item": "hurtfx"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1092",
+       "type": "ifVariable",
+       "variable": "r1",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1088",
+         "type": "changeVariable",
+         "variable": "r1",
+         "value": -1
+        },
+        {
+         "id": "b1091",
+         "type": "ifVariable",
+         "variable": "r1",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b1089",
+           "type": "show",
+           "item": "slime1"
+          },
+          {
+           "id": "b1090",
+           "type": "setVariable",
+           "variable": "s1",
+           "value": 3
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1102",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1099",
+       "type": "ifVariable",
+       "variable": "d1",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1098",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "drop1",
+         "comparison": "lessOrEqual",
+         "value": 64,
+         "actions": [
+          {
+           "id": "b1094",
+           "type": "hide",
+           "item": "drop1"
+          },
+          {
+           "id": "b1095",
+           "type": "setVariable",
+           "variable": "d1",
+           "value": 0
+          },
+          {
+           "id": "b1096",
+           "type": "changeVariable",
+           "variable": "jelly",
+           "value": 1
+          },
+          {
+           "id": "b1097",
+           "type": "playSound",
+           "sound": "pickup"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1101",
+       "type": "ifVariable",
+       "variable": "d1",
+       "comparison": "greater",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1100",
+         "type": "changeVariable",
+         "variable": "d1",
+         "value": -1
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1123",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1117",
+       "type": "ifVariable",
+       "variable": "s2",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1104",
+         "type": "ifItemDistance",
+         "item": "slime2",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1103",
+           "type": "chaseItem",
+           "item": "slime2",
+           "otherItem": "hero",
+           "value": 150
+          }
+         ]
+        },
+        {
+         "id": "b1109",
+         "type": "ifItemDistance",
+         "item": "slime2",
+         "otherItem": "hero",
+         "comparison": "greater",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1106",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "less",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1105",
+             "type": "setVelocity",
+             "item": "slime2",
+             "x": -70,
+             "y": 0
+            }
+           ]
+          },
+          {
+           "id": "b1108",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "greaterOrEqual",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1107",
+             "type": "setVelocity",
+             "item": "slime2",
+             "x": 70,
+             "y": 0
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1116",
+         "type": "ifItemDistance",
+         "item": "slime2",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 72,
+         "actions": [
+          {
+           "id": "b1115",
+           "type": "ifVariable",
+           "variable": "hurtCd",
+           "comparison": "equal",
+           "value": 0,
+           "actions": [
+            {
+             "id": "b1110",
+             "type": "changeVariable",
+             "variable": "hp",
+             "value": -1
+            },
+            {
+             "id": "b1111",
+             "type": "setVariable",
+             "variable": "hurtCd",
+             "value": 50
+            },
+            {
+             "id": "b1112",
+             "type": "playSound",
+             "sound": "hurt"
+            },
+            {
+             "id": "b1113",
+             "type": "putAtItem",
+             "item": "hurtfx",
+             "otherItem": "hero",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1114",
+             "type": "burstParticles",
+             "item": "hurtfx"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1122",
+       "type": "ifVariable",
+       "variable": "r2",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1118",
+         "type": "changeVariable",
+         "variable": "r2",
+         "value": -1
+        },
+        {
+         "id": "b1121",
+         "type": "ifVariable",
+         "variable": "r2",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b1119",
+           "type": "show",
+           "item": "slime2"
+          },
+          {
+           "id": "b1120",
+           "type": "setVariable",
+           "variable": "s2",
+           "value": 3
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1132",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1129",
+       "type": "ifVariable",
+       "variable": "d2",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1128",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "drop2",
+         "comparison": "lessOrEqual",
+         "value": 64,
+         "actions": [
+          {
+           "id": "b1124",
+           "type": "hide",
+           "item": "drop2"
+          },
+          {
+           "id": "b1125",
+           "type": "setVariable",
+           "variable": "d2",
+           "value": 0
+          },
+          {
+           "id": "b1126",
+           "type": "changeVariable",
+           "variable": "jelly",
+           "value": 1
+          },
+          {
+           "id": "b1127",
+           "type": "playSound",
+           "sound": "pickup"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1131",
+       "type": "ifVariable",
+       "variable": "d2",
+       "comparison": "greater",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1130",
+         "type": "changeVariable",
+         "variable": "d2",
+         "value": -1
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1153",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1147",
+       "type": "ifVariable",
+       "variable": "s3",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1134",
+         "type": "ifItemDistance",
+         "item": "slime3",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1133",
+           "type": "chaseItem",
+           "item": "slime3",
+           "otherItem": "hero",
+           "value": 150
+          }
+         ]
+        },
+        {
+         "id": "b1139",
+         "type": "ifItemDistance",
+         "item": "slime3",
+         "otherItem": "hero",
+         "comparison": "greater",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1136",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "less",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1135",
+             "type": "setVelocity",
+             "item": "slime3",
+             "x": 70,
+             "y": 0
+            }
+           ]
+          },
+          {
+           "id": "b1138",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "greaterOrEqual",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1137",
+             "type": "setVelocity",
+             "item": "slime3",
+             "x": -70,
+             "y": 0
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1146",
+         "type": "ifItemDistance",
+         "item": "slime3",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 72,
+         "actions": [
+          {
+           "id": "b1145",
+           "type": "ifVariable",
+           "variable": "hurtCd",
+           "comparison": "equal",
+           "value": 0,
+           "actions": [
+            {
+             "id": "b1140",
+             "type": "changeVariable",
+             "variable": "hp",
+             "value": -1
+            },
+            {
+             "id": "b1141",
+             "type": "setVariable",
+             "variable": "hurtCd",
+             "value": 50
+            },
+            {
+             "id": "b1142",
+             "type": "playSound",
+             "sound": "hurt"
+            },
+            {
+             "id": "b1143",
+             "type": "putAtItem",
+             "item": "hurtfx",
+             "otherItem": "hero",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1144",
+             "type": "burstParticles",
+             "item": "hurtfx"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1152",
+       "type": "ifVariable",
+       "variable": "r3",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1148",
+         "type": "changeVariable",
+         "variable": "r3",
+         "value": -1
+        },
+        {
+         "id": "b1151",
+         "type": "ifVariable",
+         "variable": "r3",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b1149",
+           "type": "show",
+           "item": "slime3"
+          },
+          {
+           "id": "b1150",
+           "type": "setVariable",
+           "variable": "s3",
+           "value": 3
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1162",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1159",
+       "type": "ifVariable",
+       "variable": "d3",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1158",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "drop3",
+         "comparison": "lessOrEqual",
+         "value": 64,
+         "actions": [
+          {
+           "id": "b1154",
+           "type": "hide",
+           "item": "drop3"
+          },
+          {
+           "id": "b1155",
+           "type": "setVariable",
+           "variable": "d3",
+           "value": 0
+          },
+          {
+           "id": "b1156",
+           "type": "changeVariable",
+           "variable": "jelly",
+           "value": 1
+          },
+          {
+           "id": "b1157",
+           "type": "playSound",
+           "sound": "pickup"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1161",
+       "type": "ifVariable",
+       "variable": "d3",
+       "comparison": "greater",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1160",
+         "type": "changeVariable",
+         "variable": "d3",
+         "value": -1
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1183",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1177",
+       "type": "ifVariable",
+       "variable": "s4",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1164",
+         "type": "ifItemDistance",
+         "item": "slime4",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1163",
+           "type": "chaseItem",
+           "item": "slime4",
+           "otherItem": "hero",
+           "value": 150
+          }
+         ]
+        },
+        {
+         "id": "b1169",
+         "type": "ifItemDistance",
+         "item": "slime4",
+         "otherItem": "hero",
+         "comparison": "greater",
+         "value": 520,
+         "actions": [
+          {
+           "id": "b1166",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "less",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1165",
+             "type": "setVelocity",
+             "item": "slime4",
+             "x": -70,
+             "y": 0
+            }
+           ]
+          },
+          {
+           "id": "b1168",
+           "type": "ifVariable",
+           "variable": "tick",
+           "comparison": "greaterOrEqual",
+           "value": 120,
+           "actions": [
+            {
+             "id": "b1167",
+             "type": "setVelocity",
+             "item": "slime4",
+             "x": 70,
+             "y": 0
+            }
+           ]
+          }
+         ]
+        },
+        {
+         "id": "b1176",
+         "type": "ifItemDistance",
+         "item": "slime4",
+         "otherItem": "hero",
+         "comparison": "lessOrEqual",
+         "value": 72,
+         "actions": [
+          {
+           "id": "b1175",
+           "type": "ifVariable",
+           "variable": "hurtCd",
+           "comparison": "equal",
+           "value": 0,
+           "actions": [
+            {
+             "id": "b1170",
+             "type": "changeVariable",
+             "variable": "hp",
+             "value": -1
+            },
+            {
+             "id": "b1171",
+             "type": "setVariable",
+             "variable": "hurtCd",
+             "value": 50
+            },
+            {
+             "id": "b1172",
+             "type": "playSound",
+             "sound": "hurt"
+            },
+            {
+             "id": "b1173",
+             "type": "putAtItem",
+             "item": "hurtfx",
+             "otherItem": "hero",
+             "x": -28,
+             "y": -28
+            },
+            {
+             "id": "b1174",
+             "type": "burstParticles",
+             "item": "hurtfx"
+            }
+           ]
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1182",
+       "type": "ifVariable",
+       "variable": "r4",
+       "comparison": "greater",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1178",
+         "type": "changeVariable",
+         "variable": "r4",
+         "value": -1
+        },
+        {
+         "id": "b1181",
+         "type": "ifVariable",
+         "variable": "r4",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b1179",
+           "type": "show",
+           "item": "slime4"
+          },
+          {
+           "id": "b1180",
+           "type": "setVariable",
+           "variable": "s4",
+           "value": 3
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1192",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1189",
+       "type": "ifVariable",
+       "variable": "d4",
+       "comparison": "equal",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1188",
+         "type": "ifItemDistance",
+         "item": "hero",
+         "otherItem": "drop4",
+         "comparison": "lessOrEqual",
+         "value": 64,
+         "actions": [
+          {
+           "id": "b1184",
+           "type": "hide",
+           "item": "drop4"
+          },
+          {
+           "id": "b1185",
+           "type": "setVariable",
+           "variable": "d4",
+           "value": 0
+          },
+          {
+           "id": "b1186",
+           "type": "changeVariable",
+           "variable": "jelly",
+           "value": 1
+          },
+          {
+           "id": "b1187",
+           "type": "playSound",
+           "sound": "pickup"
+          }
+         ]
+        }
+       ]
+      },
+      {
+       "id": "b1191",
+       "type": "ifVariable",
+       "variable": "d4",
+       "comparison": "greater",
+       "value": 1,
+       "actions": [
+        {
+         "id": "b1190",
+         "type": "changeVariable",
+         "variable": "d4",
+         "value": -1
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1217",
+     "type": "everyFrame",
+     "actions": [
+      {
+       "id": "b1216",
+       "type": "ifVariable",
+       "variable": "hp",
+       "comparison": "lessOrEqual",
+       "value": 0,
+       "actions": [
+        {
+         "id": "b1194",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 1,
+         "actions": [
+          {
+           "id": "b1193",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 10
+          }
+         ]
+        },
+        {
+         "id": "b1196",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 2,
+         "actions": [
+          {
+           "id": "b1195",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 12
+          }
+         ]
+        },
+        {
+         "id": "b1198",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 3,
+         "actions": [
+          {
+           "id": "b1197",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 14
+          }
+         ]
+        },
+        {
+         "id": "b1200",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 4,
+         "actions": [
+          {
+           "id": "b1199",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 16
+          }
+         ]
+        },
+        {
+         "id": "b1202",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 5,
+         "actions": [
+          {
+           "id": "b1201",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 18
+          }
+         ]
+        },
+        {
+         "id": "b1204",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 6,
+         "actions": [
+          {
+           "id": "b1203",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 20
+          }
+         ]
+        },
+        {
+         "id": "b1206",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 7,
+         "actions": [
+          {
+           "id": "b1205",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 22
+          }
+         ]
+        },
+        {
+         "id": "b1208",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 8,
+         "actions": [
+          {
+           "id": "b1207",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 24
+          }
+         ]
+        },
+        {
+         "id": "b1210",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 9,
+         "actions": [
+          {
+           "id": "b1209",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 26
+          }
+         ]
+        },
+        {
+         "id": "b1212",
+         "type": "ifVariable",
+         "variable": "level",
+         "comparison": "equal",
+         "value": 10,
+         "actions": [
+          {
+           "id": "b1211",
+           "type": "setVariable",
+           "variable": "hp",
+           "value": 28
+          }
+         ]
+        },
+        {
+         "id": "b1213",
+         "type": "setVariable",
+         "variable": "from",
+         "value": 3
+        },
+        {
+         "id": "b1214",
+         "type": "setVariable",
+         "variable": "faintT",
+         "value": 240
+        },
+        {
+         "id": "b1215",
+         "type": "goToScene",
+         "scene": "village"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "id": "b1221",
+     "type": "whenItemsTouch",
+     "actions": [
+      {
+       "id": "b1218",
+       "type": "setVariable",
+       "variable": "from",
+       "value": 2
+      },
+      {
+       "id": "b1219",
+       "type": "playSound",
+       "sound": "door"
+      },
+      {
+       "id": "b1220",
+       "type": "goToScene",
+       "scene": "village"
+      }
+     ],
+     "item": "hero",
+     "otherItem": "exit"
+    }
+   ]
+  }
+ ]
+}

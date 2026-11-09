@@ -1,0 +1,6 @@
+/build/
+/dist/
+/.adk/
+/.studio-backup/
+CMakePresets.json
+/src/Generated*

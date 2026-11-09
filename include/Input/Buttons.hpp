@@ -1,0 +1,21 @@
+#ifndef Greenhollow_Input_Buttons_hpp
+#define Greenhollow_Input_Buttons_hpp
+#include <cstdint>
+
+// Bits of the pad's button mask, as Controller::Read returns it.
+namespace Buttons {
+inline constexpr std::uint32_t DpadUp = 0x10;
+inline constexpr std::uint32_t DpadRight = 0x20;
+inline constexpr std::uint32_t DpadDown = 0x40;
+inline constexpr std::uint32_t DpadLeft = 0x80;
+inline constexpr std::uint32_t Triangle = 0x1000;
+inline constexpr std::uint32_t Circle = 0x2000;
+inline constexpr std::uint32_t Cross = 0x4000;
+inline constexpr std::uint32_t Square = 0x8000;
+// Not pad bits: SceneState sets these from the stick or D-pad direction.
+inline constexpr std::uint32_t MoveUp = 0x01000000;
+inline constexpr std::uint32_t MoveDown = 0x02000000;
+inline constexpr std::uint32_t MoveLeft = 0x04000000;
+inline constexpr std::uint32_t MoveRight = 0x08000000;
+}
+#endif

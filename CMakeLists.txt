@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.22.1)
+project(Greenhollow LANGUAGES C CXX)
+find_package(AnyDevKit CONFIG REQUIRED)
+adk_add_executable(Greenhollow
+    src/Main.cpp
+    src/Application.cpp
+    src/Audio/AudioEngine.cpp
+    src/Error.cpp
+    src/Input/Controller.cpp
+    src/Scene/SceneState.cpp
+    src/Graphics/Display.cpp
+    src/Graphics/Font.cpp
+    src/Graphics/Memory.cpp
+    src/Graphics/Pipeline.cpp
+    src/Graphics/Renderer.cpp
+    src/GeneratedImages.cpp
+    src/GeneratedSounds.cpp
+    src/Save/SaveService.cpp
+)
+target_include_directories(Greenhollow PRIVATE include src)
+adk_link_libraries(Greenhollow libc libkernel libSceVideoOut libSceSystemService libSceAgc libSceAgcDriver libScePad libSceSysmodule libSceUserService libSceAudioOut libSceSaveData.native)
+adk_add_shaders(Greenhollow shaders/Screen.vert HEADER ScreenVertex OPTIONS --descriptor "0,0,storage-buffer,1,0,16")
+adk_add_shaders(Greenhollow shaders/Screen.frag HEADER ScreenFragment COLOR_FORMAT 4)
+adk_add_shaders(Greenhollow shaders/ScreenImage.frag HEADER ScreenImageFragment COLOR_FORMAT 4 OPTIONS --descriptor "0,0,sampler,1,0,16" --descriptor "0,1,sampled-image,1,16,32")
+
+# Studio exports image pixels as plain files that GeneratedImages.cpp pulls in with .incbin, so the
+# compiler never has to parse them. A build reruns when they change.
+target_compile_definitions(Greenhollow PRIVATE SCENE_IMAGE_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/src/GeneratedImages")
+file(GLOB scene_image_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/GeneratedImages/*.rgba" "${CMAKE_CURRENT_SOURCE_DIR}/src/GeneratedImages/*.tiles")
+set_property(SOURCE src/GeneratedImages.cpp APPEND PROPERTY OBJECT_DEPENDS ${scene_image_files})
+
+# Sounds are embedded the same way, from the raw PCM files Studio exports.
+target_compile_definitions(Greenhollow PRIVATE SCENE_SOUND_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/src/GeneratedSounds")
+file(GLOB scene_sound_files CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/GeneratedSounds/*.pcm")
+set_property(SOURCE src/GeneratedSounds.cpp APPEND PROPERTY OBJECT_DEPENDS ${scene_sound_files})

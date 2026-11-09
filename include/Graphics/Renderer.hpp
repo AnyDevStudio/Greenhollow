@@ -1,0 +1,59 @@
+#ifndef Greenhollow_Graphics_Renderer_hpp
+#define Greenhollow_Graphics_Renderer_hpp
+#include "Graphics/Memory.hpp"
+#include "Graphics/Display.hpp"
+#include "Graphics/Pipeline.hpp"
+#include <array>
+#include <memory>
+#include <span>
+
+class SceneState;
+
+class Renderer final {
+public:
+    Renderer(int width, int height);
+    ~Renderer() noexcept(false);
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
+    void Draw(Display& display, const SceneState& scene);
+
+private:
+    struct alignas(16) Frame {
+        std::array<float, 4> rectangle;
+        std::array<float, 4> color;
+        std::array<float, 4> viewport;
+        std::array<std::uint32_t, 4> glyph;
+    };
+    struct DrawSlot {
+        std::uint32_t* Commands = nullptr;
+        std::uint64_t* Fence = nullptr;
+        Frame* Frames = nullptr;
+        std::uint32_t* Descriptor = nullptr;
+        ShaderRegister* Contexts = nullptr;
+        ShaderRegister* ImageContexts = nullptr;
+        std::size_t Bytes = 0;
+        bool Pending = false;
+    };
+    std::array<DrawSlot, 3> slots{};
+    std::size_t slotIndex = 0;
+    bool shaderMemoryPending = true;
+    static std::size_t requiredMemory();
+    void selectSlot(std::size_t index);
+    void waitSlot(DrawSlot& slot);
+    Shader* createShader(std::span<const std::uint8_t> header, std::span<const std::uint8_t> code);
+    void uploadImages();
+    Memory memory;
+    std::unique_ptr<Pipeline> pipeline;
+    Shader* vertex;
+    Shader* fragment;
+    Shader* imageFragment = nullptr;
+    std::unique_ptr<Pipeline> imagePipeline;
+    std::uint32_t* imageTables = nullptr;
+    std::uint32_t* commands;
+    std::uint64_t* fence;
+    Frame* frames;
+    std::uint32_t* descriptor;
+    ShaderRegister* contexts;
+    ShaderRegister* imageContexts = nullptr;
+};
+#endif

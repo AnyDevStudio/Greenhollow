@@ -1,0 +1,150 @@
+#ifndef Greenhollow_Scene_SceneState_hpp
+#define Greenhollow_Scene_SceneState_hpp
+#include "Audio/Mixer.hpp"
+#include "GeneratedLogic.hpp"
+#include "GeneratedScene.hpp"
+#include "GeneratedVariables.hpp"
+#include "Save/SaveData.hpp"
+#include "Scene/Particles.hpp"
+#include "Scene/Physics2D.hpp"
+#include "Scene/World2D.hpp"
+#include <array>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <span>
+#include <string_view>
+
+// Current state of every item in GeneratedScene::Items, indexed the same way, and the game's variables.
+// GeneratedScene::Items holds every scene's items in one list; only the scene that is showing runs and is
+// drawn, and its slice is given by CurrentSceneInfo(). The block logic in GeneratedLogic.hpp changes it
+// through the Logic section below.
+class SceneState final {
+public:
+    using Position = std::array<float, 2>;
+    using Positions = std::array<Position, GeneratedScene::Items.size()>;
+    using Color = std::array<float, 3>;
+    using Colors = std::array<Color, GeneratedScene::Items.size()>;
+    using Visibility = std::array<bool, GeneratedScene::Items.size()>;
+    using SaveMailbox = SaveData::Mailbox<GeneratedVariables::VariableCount>;
+    SceneState(int width, int height, Audio::Mixer* mixer = nullptr, SaveMailbox* saves = nullptr); // also runs the start scene's "When the game starts" blocks
+    void Update(double seconds, Position direction, std::uint32_t buttons);
+    std::size_t CurrentScene() const; // an index into GeneratedScene::Scenes
+    const GeneratedScene::SceneInfo& CurrentSceneInfo() const;
+    const Positions& Current() const;
+    const Colors& CurrentColors() const;
+    const Visibility& CurrentVisibility() const;
+    // Where the camera is this frame. Screen-fixed items do not move with it.
+    World2D::Point Camera() const;
+    // Which frame of its sheet a sprite shows right now, and whether it is flipped.
+    std::uint32_t SpriteFrame(std::size_t item) const;
+    bool Flipped(std::size_t item) const;
+
+    // Logic: called by the generated code. No item stays outside its limits: a controllable item
+    // stays inside the stage, and any other item within LogicWorldLimit of the stage's origin.
+    void MoveBy(std::size_t item, float x, float y);
+    void SetPosition(std::size_t item, float x, float y);
+    void SetVisible(std::size_t item, bool visible);
+    void SetColor(std::size_t item, float red, float green, float blue);
+    void SetVariable(std::size_t variable, std::int32_t value);
+    void ChangeVariable(std::size_t variable, std::int32_t amount); // stops at the largest or smallest value instead of overflowing
+    std::int32_t Variable(std::size_t variable) const;
+    bool Touching(std::size_t first, std::size_t second) const; // hidden items touch nothing
+    bool Held(std::uint32_t button) const;
+    bool Pressed(std::uint32_t button) const; // went down this frame
+    // Sound and saving: each is safe when audio or save data is unavailable, and does nothing then.
+    void PlaySound(std::size_t sound);
+    void PlayMusic(std::size_t sound); // loops; playing the music already playing keeps its place
+    void StopMusic();
+    void SetVolume(std::int32_t percent);
+    void SaveVariables(); // the save happens in the background; only the newest values are kept
+    void LoadVariables(); // loaded values replace the variables at the start of a later frame
+    // Plays a particles item once, at its current position.
+    void BurstParticles(std::size_t item);
+    // Keeps a one-shot particles item from playing when the game starts, for a block to start it.
+    void AwaitBurst(std::size_t item);
+    // Plays animation number `animation` of a sprite, the same one keeps its place.
+    void PlayAnimation(std::size_t item, std::size_t animation);
+    void SetFlipped(std::size_t item, bool flipped);
+    // The camera keeps this item centered until SetCameraPosition, always inside the world.
+    void CameraFollow(std::size_t item);
+    void SetCameraPosition(float x, float y);
+    // Physics: only a moving body has any of this; anything else reads as false or does nothing.
+    bool Landed(std::size_t item) const;   // landed on the ground this frame
+    bool HitSolid(std::size_t item) const; // hit a solid this frame
+    bool LeftWorld(std::size_t item) const; // left the world this frame
+    bool OnGround(std::size_t item) const;
+    void SetVelocity(std::size_t item, float x, float y); // units per second
+    float Distance(std::size_t first, std::size_t second) const; // center to center, hidden items included
+    void Chase(std::size_t item, std::size_t target, float speed); // a moving body heads for the target
+    void PutAt(std::size_t item, std::size_t target, float x, float y); // at the target's position plus x and y
+    void Jump(std::size_t item);
+    // Scenes change after the blocks of the frame have run. Variables keep their values.
+    void GoToScene(std::size_t scene);
+    void RestartScene();
+
+    // Rectangles to draw for a particles item this frame, and none for any other item.
+    std::span<const Particles::Quad> ParticleQuads(std::size_t item) const;
+
+    // What a text item shows this frame. Text with no variables is its scene text, untouched.
+    std::string_view CurrentText(std::size_t item) const;
+
+private:
+    void clampToBounds(std::size_t item, Position& position) const; // the current scene's world, or the screen for a screen-fixed item
+    void limitPosition(std::size_t item, Position& position) const;
+    float drawnWidth(std::size_t item) const; // follows the current text of an item that shows variables
+    Position centerOf(std::size_t item) const;
+    void rebuildText();
+    // Allocated once in the constructor, so the frame loop never touches the heap. A scene with no
+    // particles allocates nothing.
+    struct ParticleWorld {
+        std::array<Particles::Emitter, GeneratedScene::ParticleEffectCount> emitters{};
+        std::array<Particles::Particle, GeneratedScene::ParticleCapacity> pool{};
+        std::array<Particles::Quad, GeneratedScene::ParticleCapacity> quads{};
+    };
+    std::unique_ptr<ParticleWorld> particleWorld;
+    void startParticles();
+    void resetParticlesOf(std::size_t item);
+    void applyLoadedVariables();
+    void enterScene(std::size_t scene);
+    void stepPhysics(double seconds, Position direction, std::uint32_t buttons);
+    void clearBodyEvents();
+    Physics2D::Body* bodyOf(std::size_t item);
+    const Physics2D::Body* bodyOf(std::size_t item) const;
+    Audio::Mixer* audioMixer = nullptr;
+    SaveMailbox* saveMailbox = nullptr;
+    Particles::Emitter* emitterFor(std::size_t item);
+    void updateCamera();
+    Positions positions{};
+    Colors colors{};
+    Visibility visible{};
+    Visibility flipped{};
+    std::array<World2D::AnimationPlayer, GeneratedScene::SpriteCount> animations{};
+    World2D::Point camera{0.0f, 0.0f};
+    std::int32_t followedItem = -1;
+    std::size_t currentScene = GeneratedScene::StartScene;
+    std::int32_t pendingScene = -1; // a scene to enter after this frame's blocks
+    std::array<Physics2D::Body, GeneratedScene::BodyCount> bodies{};
+    std::array<Position, GeneratedScene::BodyCount> syncedPositions{}; // where the physics last put each body
+    std::array<Physics2D::Aabb, GeneratedScene::SolidItemCount> solidBoxes{};
+    std::array<Physics2D::TileLayer, GeneratedScene::TilemapCount> tileLayers{};
+    Physics2D::FixedClock physicsClock{};
+    bool jumpWasHeld = false;
+    bool jumpPressPending = false;
+    GeneratedLogic::Memory logicMemory{};
+    std::uint32_t heldButtons = 0;
+    std::uint32_t pressedButtons = 0;
+    std::array<std::int32_t, GeneratedVariables::VariableCount> variables = GeneratedVariables::InitialValues;
+    // One buffer holding the characters of every text that shows variables, each at a fixed offset and
+    // sized for its widest number before the first frame, so rebuilding them never touches the heap.
+    static constexpr std::size_t BoundCharacters = [] {
+        std::size_t total = 0;
+        for (const auto& text : GeneratedVariables::BoundTexts) total += text.quads;
+        return total;
+    }();
+    std::array<char, BoundCharacters> boundCharacters{};
+    std::array<std::size_t, GeneratedVariables::BoundTexts.size()> boundLengths{};
+    float stageWidth;
+    float stageHeight;
+};
+#endif
