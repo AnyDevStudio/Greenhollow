@@ -87,7 +87,7 @@ int main(){
     // quest giver
     CHECK(walk(hv,21*T,10*T,true),"walks to Mira");
     idle(2); CHECK(seen(I_village_talk),"talk prompt shows near Mira");
-    press(Buttons::Cross); CHECK(v(V_dlg)==1&&seen(I_village_line1)&&seen(I_village_dlg_panel),"X opens the first line");
+    press(Buttons::Cross); CHECK(v(V_dlg)==1&&seen(I_village_line1)&&seen(I_village_dlg_panel),"X opens the first line"); CHECK(!seen(I_village_hint_panel)&&!seen(I_village_hint),"the controls bar steps aside for the dialog");
     press(Buttons::Cross); CHECK(v(V_dlg)==2&&seen(I_village_line2)&&!seen(I_village_line1),"X goes to the second line");
     press(Buttons::Cross); CHECK(v(V_dlg)==3,"X reaches the question");
     press(Buttons::Circle); CHECK(v(V_dlg)==0&&v(V_quest)==0,"Circle says not now and takes no quest");
@@ -98,7 +98,7 @@ int main(){
     press(Buttons::Cross); CHECK(v(V_dlg)==5,"talking again before the jelly says keep hunting");
     press(Buttons::Cross);
     press(Buttons::Cross); CHECK(v(V_dlg)==5,"reopened"); CHECK(walk(hv,21*T,15*T,true),"walks away from Mira");
-    idle(2); CHECK(v(V_dlg)==0,"walking away closes the dialog");
+    idle(2); CHECK(v(V_dlg)==0,"walking away closes the dialog"); CHECK(seen(I_village_hint_panel),"the controls bar comes back");
     // to the woods
     CHECK(walk(hv,39.5f*T,12*T,true,true),"walks through the east gate");
     idle(2); CHECK(scene.CurrentScene()==S_forest,"east gate goes to the forest");

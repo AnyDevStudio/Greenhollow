@@ -2,14 +2,19 @@
 import json, os, random, sys
 sys.path.insert(0, os.path.dirname(__file__))
 import art as A
+import art4 as C
 I=A.INDEX; TS=64
 GOLD='#F0C84A'; PAPER='#F6EFE0'; MINT='#A4EFDB'
 root=sys.argv[1]
 
 # ---------- items
 def base(i,name,kind,x,y,**k): return dict(id=i,type=kind,name=name,x=x,y=y,controllable=False,**k)
-def img(i,name,x,y,w,h,src,**k): return base(i,name,'image',x,y,width=w,height=h,source=f'assets/{src}.png',pixelated=True,**k)
-def hud(i,name,x,y,w,h,src): return img(i,name,x,y,w,h,src,screenFixed=True)
+def img(i,name,x,y,w,h,src,pix=False,**k):
+    d=base(i,name,'image',x,y,width=w,height=h,source=f'assets/{src}.png',**k)
+    if pix: d['pixelated']=True
+    return d
+def up(i,name,x,y,w,h,src,dw,dh,**k): return img(i,name,x,y,w,h,src,upright=True,drawWidth=dw,drawHeight=dh,**k)
+def hud(i,name,x,y,w,h,src,pix=False): return img(i,name,x,y,w,h,src,pix=pix,screenFixed=True)
 def text(i,name,x,y,scale,t,color=PAPER,fixed=True):
     d=base(i,name,'text',x,y,scale=scale,text=t,color=color)
     if fixed: d['screenFixed']=True
@@ -17,13 +22,19 @@ def text(i,name,x,y,scale,t,color=PAPER,fixed=True):
 def sheet(fw,fh,anims,start): return dict(frameWidth=fw,frameHeight=fh,animation=start,animations=[dict(name=n,frames=f,fps=s) for n,f,s in anims])
 PERSON=[('idleDown',[0],1),('walkDown',[1,2,3,2],8),('idleUp',[4],1),('walkUp',[5,6,7,6],8),('idleSide',[8],1),('walkSide',[9,10,11,10],8)]
 def hero(col,row):
-    return img('hero','Hero',col*TS,row*TS,64,64,'hero',sheet=sheet(16,16,PERSON,'idleDown'),physics='body',gravityScale=0,platformer=False,topDown=True,moveSpeed=420,jumpHeight=260)
+    return up('hero','Hero',col*TS,row*TS,64,64,'hero',102,136,sheet=sheet(120,160,PERSON,'idleDown'),physics='body',gravityScale=0,platformer=False,topDown=True,moveSpeed=420,jumpHeight=260)
 def npc(i,name,src,col,row):
-    return img(i,name,col*TS,row*TS,64,64,src,sheet=sheet(16,16,[('idle',[0],1)],'idle'),physics='solid')
-def trigger(i,name,x,y,w,h): return img(i,name,x,y,w,h,'clear')
-def tilemap(i,name,grid,solid=()):
+    return up(i,name,col*TS,row*TS,64,64,src,102,136,sheet=sheet(120,160,[('idle',[0,1],2)],'idle'),physics='solid')
+def trigger(i,name,x,y,w,h): return up(i,name,x,y,w,h,'clear',4,4)
+def tree_item(n,c,r,src):
+    return up(f'tree{n}',f'Tree {n}',c*TS,r*TS,TS,TS,src,236,320,sheet=sheet(340,460,[(f'v{k}',[k],1) for k in range(4)],f'v{(c*7+r*13)%4}'))
+def flat(i,name,x,y,w,h,src): return img(i,name,x,y,w,h,src)
+def outer(kind,W,H): return flat('outer','Land around the map',-1800,-900,W*TS+3600,H*TS+1500,f'outer_{kind}')
+def art_layer(i,name,src,W,H): return img(i,name,0,0,W*TS,H*TS,src)
+def light_layer(kind): return hud('light','Light',0,0,1920,1080,f'light_{kind}')
+def tilemap(i,name,grid,solid=(),source='assets/tiles.png'):
     def row(r): return ','.join(str(v) for v in r)
-    return base(i,name,'tilemap',0,0,source='assets/tiles.png',tileWidth=16,tileHeight=16,tileScale=4,columns=len(grid[0]),rows=len(grid),tiles=[row(r) for r in grid],solidTiles=sorted(set(solid)))
+    return base(i,name,'tilemap',0,0,source=source,tileWidth=16,tileHeight=16,tileScale=4,columns=len(grid[0]),rows=len(grid),tiles=[row(r) for r in grid],solidTiles=sorted(set(solid)))
 def particles(i,name,preset,palette,amount,size,pixel,color=GOLD,gravity=100,speed=100):
     return base(i,name,'particles',0,-400,width=size,height=size,color=color,preset=preset,palette=palette,amount=amount,spread=70,speed=speed,gravity=gravity,pixelSize=pixel,looping=False)
 
@@ -64,6 +75,19 @@ def dialog_items(pages):
     return out
 
 # ---------- maps
+def trees_of(o,W,H,trunk,src):
+    "Every tree that stands, thinned along the sides and left off the near edge so nothing hides the player. Walls stay."
+    out=[]
+    for y in range(H):
+        for x in range(W):
+            if o[y][x]!=trunk or y==H-1: continue
+            if (x==0 or x==W-1) and y%2: continue
+            out.append(tree_item(len(out),x,y,src))
+    return out
+def walls(g,o,W,H,solid,ground_solid):
+    # The art is painted as whole pictures, so what blocks the hero is this invisible layer, one tile per cell.
+    grid_=[[0 if (o[y][x] in solid or g[y][x] in ground_solid) else -1 for x in range(W)] for y in range(H)]
+    return tilemap('walls','Walls (invisible)',grid_,[0],source='assets/collision.png')
 def grid(w,h,v): return [[v]*w for _ in range(h)]
 def tree(obj,over,x,y,trunk='trunk',crown='crown'):
     obj[y][x]=I[trunk]
@@ -98,13 +122,20 @@ def village():
     for y in range(16,21):
         for c in range(3,10): g[y][c]=I['water']
     o[15][15]=I['well']; o[9][36]=I['sign']
-    for c,y in ((14,18),(19,16),(24,19),(30,16),(35,18),(27,14),(33,9),(5,6),(4,12),(37,5),(3,4),(16,20)):
+    for c,y in ((24,19),(30,16),(35,18),(27,14),(33,9),(5,6),(4,12),(37,5),(3,4),(16,20)):
         tree(o,v,c,y)
-    items=[tilemap('ground','Ground',g,[I['water']]),tilemap('objects','Objects',o,[I[n] for n in ('trunk','roof','roof_edge','wall','window','door','fence','well','sign')]),
+    solid={I[n] for n in ('trunk','roof','roof_edge','wall','window','door','fence','well','sign')}
+    wo=C.ground_village(root,g,o,W,H,I,[(8,3,7,0),(29,3,6,0)]); C.shimmer(root,wo,(3,16,7,5))
+    items=[hud('backdrop','Sky',0,0,1920,1080,'backdrop_village'),outer('village',W,H),art_layer('ground','Ground art','village_ground',W,H),walls(g,o,W,H,solid,{I['water']}),
+     img('shimmer','Water shimmer',3*TS,16*TS,7*TS,5*TS,'shimmer',sheet=sheet(7*C.TX,5*C.TX,[('shine',[0,1,2,3],3)],'shine')),
      trigger('door_trigger','House door',11*TS,8*TS+20,TS,44),trigger('gate','East gate',W*TS-40,10*TS,40,5*TS),
-     npc('mira','Mira','mira',21,8),hero(11,11),tilemap('over','Tree tops',v),
-     text('talk','Talk prompt',21*TS-22,8*TS-34,3,'X TALK',GOLD,fixed=False),
-     particles('levelfx','Level up sparks','fireworks','festival',240,520,10)]
+     up('house_a','Your house',8*TS,7*TS,7*TS,TS,'house_a',7*TS,400),up('house_b','Blue house',29*TS,7*TS,6*TS,TS,'house_b',6*TS,400),
+     up('fence1','Fence back',17*TS,3*TS,9*TS,TS,'fence_long',9*TS,110),up('fence2','Fence front',17*TS,7*TS,9*TS,TS,'fence_long',9*TS,110),
+     *[up(f'post{i}','Fence side',c*TS,y*TS,TS,TS,'fence_short',TS,110) for i,(c,y) in enumerate((c,y) for c in (17,25) for y in (4,5,6))],
+     up('well','Well',15*TS,15*TS,TS,TS,'well',136,168),up('sign','Sign',36*TS,9*TS,TS,TS,'sign',104,120),
+     npc('mira','Mira','mira',21,8),hero(11,11),*trees_of(o,W,H,I['trunk'],'trees'),
+     text('talk','Talk prompt',21*TS-22,6*TS,3,'X TALK',GOLD,fixed=False),
+     particles('levelfx','Level up sparks','fireworks','festival',110,520,5),light_layer('village')]
     pages={'1':('Mira','Slimes crawled out of the east woods and ate my garden.'),
            '2':('Mira','Bring me 3 slime jellies and I will make it worth your while.'),
            '3':('Mira','Will you help me?   X  Yes, I will     CIRCLE  Not now'),
@@ -113,7 +144,7 @@ def village():
            '6':('Mira','You did it! Take 50 gold, a potion and my thanks.'),
            '7':('Mira','The garden is safe thanks to you, hero.')}
     items+=hud_items()+dialog_items(pages)+bag_items()
-    return dict(id='village',name='Village',background='#6AA84F',world=dict(width=W*TS,height=H*TS),items=items),pages
+    return dict(id='village',name='Village',background='#1F2A58',world=dict(width=W*TS,height=H*TS),tilt=55,items=items),pages
 
 def forest():
     W,H=48,26; r=random.Random(23)
@@ -133,16 +164,18 @@ def forest():
         if 11<=y<=16: continue
         if any(abs(c-a)<=4 and abs(y-b)<=4 for a,b in spots): continue
         if o[y][c]==-1: tree(o,v,c,y,**t) if r.random()<.8 else o[y].__setitem__(c,I['rock'])
-    items=[tilemap('ground','Ground',g),tilemap('objects','Objects',o,[I['forest_trunk'],I['rock']]),trigger('exit','West exit',0,11*TS,40,5*TS)]
-    for n in range(1,5): items.append(img(f'drop{n}',f'Jelly drop {n}',0,-200,48,48,'jelly'))
+    C.ground_forest(root,g,o,W,H,I)
+    items=[hud('backdrop','Sky',0,0,1920,1080,'backdrop_forest'),outer('forest',W,H),art_layer('ground','Ground art','forest_ground',W,H),walls(g,o,W,H,{I['forest_trunk'],I['rock']},set()),trigger('exit','West exit',0,11*TS,40,5*TS)]
+    items+=[up(f'rock{n}','Rock',c*TS,y*TS,TS,TS,'rock',96,96) for n,(c,y) in enumerate((c,y) for y in range(H) for c in range(W) if o[y][c]==I['rock'])]
+    for n in range(1,5): items.append(up(f'drop{n}',f'Jelly drop {n}',0,-200,48,48,'jelly',60,60))
     for n,(c,y) in enumerate(spots,1):
-        items.append(img(f'slime{n}',f'Slime {n}',c*TS,y*TS,64,64,'slime',sheet=sheet(16,16,[('hop',[0,1,0,2],6)],'hop'),physics='body',gravityScale=0,platformer=False,moveSpeed=150,jumpHeight=260))
-    items+=[hero(3,13),tilemap('over','Tree tops',v),
-      img('slash','Sword sweep',0,-400,192,192,'slash',sheet=sheet(32,32,[('sweep',[0,1,2],18)],'sweep')),
-      particles('hitfx','Hit sparks','sparks','ice',60,120,8,MINT),particles('hurtfx','Hurt sparks','sparks','fire',50,120,8,'#D94F5C'),
-      particles('levelfx','Level up sparks','fireworks','festival',240,520,10)]
+        items.append(up(f'slime{n}',f'Slime {n}',c*TS,y*TS,64,64,'slime',96,96,sheet=sheet(120,120,[('hop',[0,1,0,2],6)],'hop'),physics='body',gravityScale=0,platformer=False,moveSpeed=150,jumpHeight=260))
+    items+=[hero(3,13),*trees_of(o,W,H,I['forest_trunk'],'dark_trees'),
+      up('slash','Sword sweep',0,-400,192,192,'slash',192,192,sheet=sheet(192,192,[('sweep',[0,1,2],18)],'sweep')),
+      particles('hitfx','Hit sparks','sparks','ice',24,120,4,MINT),particles('hurtfx','Hurt sparks','sparks','fire',22,120,4,'#D94F5C'),
+      particles('levelfx','Level up sparks','fireworks','festival',110,520,5),light_layer('forest')]
     items+=hud_items()+bag_items()
-    return dict(id='forest',name='Forest',background='#3F7A48',world=dict(width=W*TS,height=H*TS),items=items),spots
+    return dict(id='forest',name='Forest',background='#0A1A2A',world=dict(width=W*TS,height=H*TS),tilt=55,items=items),spots
 
 def inside():
     W,H=30,17
@@ -153,16 +186,18 @@ def inside():
     for y in range(3,15): o[y][8]=o[y][22]=I['inner_wall']
     for c in (15,16): g[14][c]=I['exit_mat']; o[14][c]=-1
     o[3][12]=o[3][13]=I['shelf']; o[3][18]=I['hearth']
-    o[4][10]=I['bed_top']; o[5][10]=I['bed_bottom']; o[9][18]=o[9][19]=I['table']
+    o[4][9]=o[4][10]=I['bed_top']; o[5][9]=o[5][10]=I['bed_bottom']; o[9][18]=o[9][19]=I['table']
     for y in (9,10):
         for c in range(13,18): g[y][c]=I['rug']
-    items=[tilemap('ground','Floor',g),tilemap('objects','Furniture',o,[I[n] for n in ('void','inner_wall','shelf','hearth','bed_top','bed_bottom','table')]),
-      trigger('exit','Door out',15*TS,14*TS+24,2*TS,40),trigger('bedspot','Bed',10*TS,4*TS,TS,2*TS),npc('tobin','Tobin','tobin',19,6),hero(15,12),
-      text('talk','Talk prompt',19*TS-22,6*TS-34,3,'X TALK',GOLD,fixed=False),text('sleep','Bed prompt',11*TS+8,4*TS+8,3,'X SLEEP',GOLD,fixed=False),
-      particles('levelfx','Level up sparks','fireworks','festival',240,520,10)]
+    C.ground_house(root,g,o,W,H,I)
+    items=[hud('backdrop','Dark',0,0,1920,1080,'backdrop_house'),art_layer('ground','Room art','house_ground',W,H),walls(g,o,W,H,{I[n] for n in ('void','inner_wall','shelf','hearth','bed_top','bed_bottom','table')},set()),
+      up('back_wall','Back wall',8*TS,3*TS,15*TS,TS,'back_wall',15*TS,300),up('fire','Fire',18*TS,3*TS+4,TS,TS,'fire',104,104,sheet=sheet(110,110,[('burn',[0,1,2],7)],'burn')),up('table','Table',18*TS,9*TS,2*TS,TS,'table',196,144),up('bed','Bed',9*TS,5*TS,2*TS,TS,'bed',144,155),
+      trigger('exit','Door out',15*TS,14*TS+24,2*TS,40),trigger('bedspot','Bed',9*TS,4*TS,2*TS,2*TS),npc('tobin','Tobin','tobin',19,6),hero(15,12),
+      text('talk','Talk prompt',19*TS-22,4*TS+20,3,'X TALK',GOLD,fixed=False),text('sleep','Bed prompt',9*TS+2,3*TS+44,3,'X SLEEP',GOLD,fixed=False),
+      particles('levelfx','Level up sparks','fireworks','festival',110,520,5),light_layer('house')]
     pages={'1':('Tobin','Hurt? Lie down on my bed. It fixes nearly everything.')}
     items+=hud_items()+[text('rest','Rested text',720,200,5,'You feel rested',MINT)]+dialog_items(pages)+bag_items()
-    return dict(id='house',name='House',background='#191322',world=dict(width=W*TS,height=H*TS),items=items),pages
+    return dict(id='house',name='House',background='#0A080E',world=dict(width=W*TS,height=H*TS),tilt=45,items=items),pages
 
 # ---------- blocks
 class Ids:
@@ -219,6 +254,7 @@ def common_frame(quest_items=True):
 def dialog_frame(pages,npc_id):
     a=[]
     a+=only_when(['dlg_panel','dlg_x'],'dlg',NE,0)
+    a+=only_when(['hint_panel','hint'],'dlg',EQ,0) # the controls bar sits where the dialog box opens
     for k in pages: a+=only_when([f'who{k}',f'line{k}'],'dlg',EQ,int(k))
     a+=[hide('talk'),iff('dlg',EQ,0,near('hero',npc_id,LE,170,show('talk'))),iff('dlg',NE,0,near('hero',npc_id,GT,260,setv('dlg',0)))]
     return ev('everyFrame',*a)
