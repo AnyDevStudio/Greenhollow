@@ -344,6 +344,7 @@ def fire_sheet():
 # ---- people
 SK=('#d6ac8c','#a87a64','#f0d2b0'); HAIR=('#2d2230','#4b3a44'); SILVER=('#b4b2bd','#7f7d8e')
 LOOK=dict(hero=dict(top=('#2f6b66','#1e4a4c','#6ba88d'),bot=('#34395a','#232642'),hair=HAIR,boot='#3e2c2a'),
+          hero2=dict(top=('#a8743a','#7a4f27','#d4a25c'),bot=('#3b3448','#28222f'),hair=('#d9b25f','#a9843d'),boot='#3e2c2a',cape=('#3f6b4a','#2c4e36','#24402c'),belt='#4a3426'),
           mira=dict(top=('#54488a','#362e60','#8678ba'),bot=('#54488a','#362e60'),hair=SILVER,boot='#2d2230'),
           tobin=dict(top=('#a15a31','#6e3a22','#d1904f'),bot=('#34303c','#23202c'),hair=SILVER,boot='#2d2230'))
 def person(style,d,leg,breathe=0,seed=0):
@@ -379,20 +380,21 @@ def person(style,d,leg,breathe=0,seed=0):
         s.fill(s.curve([(cx+8,92),(cx+36,100),(cx+36,142),(cx+6,142),(cx+16,120)],True,1.4),Td,clip=m)
     else:
         arm(cx-27,cx-31,120-sw); arm(cx+27,cx+31,120+sw,Td); m=None
-    if style=='hero':
+    hero=style in ('hero','hero2'); CP=L.get('cape',('#7d3250','#642541','#5a2140'))
+    if hero:
         if d=='down':
             s.fill(s.curve([(cx-22,108),(cx-10,104),(cx-14,128),(cx-26,126)],True,1),Tl,clip=m)
             s.shape([(cx-30,124+dy),(cx,128+dy),(cx+30,124+dy),(cx+30,132+dy),(cx,136+dy),(cx-30,132+dy)],'#5c3f2b',lw=2.2,wob=.5)
             s.shape([(cx-6,124+dy),(cx+6,124+dy),(cx+7,136+dy),(cx-7,136+dy)],'#c79b42',lw=2,smooth=False,wob=.4)
-            s.shape([(cx-22,92+dy),(cx,99+dy),(cx+22,92+dy),(cx+21,104+dy),(cx,110+dy),(cx-21,104+dy)],'#7d3250',lw=2.8,wob=.7)
-            s.shape([(cx+10,104+dy),(cx+20,104+dy),(cx+22,126+dy),(cx+14,128+dy)],'#642541',lw=2.4,wob=.6)
+            s.shape([(cx-22,92+dy),(cx,99+dy),(cx+22,92+dy),(cx+21,104+dy),(cx,110+dy),(cx-21,104+dy)],CP[0],lw=2.8,wob=.7)
+            s.shape([(cx+10,104+dy),(cx+20,104+dy),(cx+22,126+dy),(cx+14,128+dy)],CP[1],lw=2.4,wob=.6)
         elif d=='up':
-            c,cm=s.shape([(cx-22,94+dy),(cx,90+dy),(cx+22,94+dy),(cx+33,140),(cx,146),(cx-33,140)],'#7d3250',lw=3.2)
-            s.fill(s.curve([(cx+4,88),(cx+40,96),(cx+40,150),(cx+8,150),(cx+16,120)],True,1.4),'#5a2140',clip=cm)
+            c,cm=s.shape([(cx-22,94+dy),(cx,90+dy),(cx+22,94+dy),(cx+33,140),(cx,146),(cx-33,140)],CP[0],lw=3.2)
+            s.fill(s.curve([(cx+4,88),(cx+40,96),(cx+40,150),(cx+8,150),(cx+16,120)],True,1.4),CP[2],clip=cm)
             for x in (-16,2,17): s.stroke([(cx+x*.6,102),(cx+x*1.2,140)],1.5,clip=cm)
         else:
-            c,cm=s.shape([(cx-14,94+dy),(cx+14,94+dy),(cx+2,108+dy),(cx-32-leg*5,142),(cx-44-leg*5,126)],'#7d3250',lw=2.8)
-            s.shape([(cx-18,92+dy),(cx+18,92+dy),(cx+18,104+dy),(cx-18,104+dy)],'#7d3250',lw=2.6,wob=.5)
+            c,cm=s.shape([(cx-14,94+dy),(cx+14,94+dy),(cx+2,108+dy),(cx-32-leg*5,142),(cx-44-leg*5,126)],CP[0],lw=2.8)
+            s.shape([(cx-18,92+dy),(cx+18,92+dy),(cx+18,104+dy),(cx-18,104+dy)],CP[0],lw=2.6,wob=.5)
             s.shape([(cx-23,124+dy),(cx+22,124+dy),(cx+22,132+dy),(cx-23,132+dy)],'#5c3f2b',lw=2.2,smooth=False,wob=.5)
     if style=='mira' and d=='down':
         s.shape([(cx-16,110+dy),(cx+16,110+dy),(cx+20,152),(cx,155),(cx-20,152)],'#ddd2b6',lw=2.6,wob=.7)
@@ -427,7 +429,7 @@ def person(style,d,leg,breathe=0,seed=0):
     hp2,hmk=s.shape(hair,H0,lw=3.2,wob=.7)
     s.fill(s.curve([(hx-R*.7,hy-R*.56),(hx-R*.15,hy-R*.9),(hx+R*.26,hy-R*.84),(hx-R*.1,hy-R*.62),(hx-R*.6,hy-R*.3)],True,1),H1,clip=hmk)
     for k in range(3):
-        a=-1+k; s.stroke([(hx+a*R*.3,hy-R*.9),(hx+a*R*.5,hy-R*.5)],1.3,'#191216',clip=hmk) if style=='hero' else None
+        a=-1+k; s.stroke([(hx+a*R*.3,hy-R*.9),(hx+a*R*.5,hy-R*.5)],1.3,'#191216' if style=='hero' else '#8a6a2c',clip=hmk) if hero else None
     if style=='mira':
         by=hy-R-7; s.shape([(hx-14,by+6),(hx-10,by-9),(hx+10,by-9),(hx+14,by+6),(hx,by+11)],H0,lw=3,wob=.6)
         s.stroke([(hx-7,by-3),(hx+1,by+2),(hx+8,by-4)],1.5,'#6c6a7b')

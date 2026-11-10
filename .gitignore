@@ -4,3 +4,7 @@
 /.studio-backup/
 CMakePresets.json
 /src/Generated*
+
+/tools/__pycache__/
+/tools/ids6.json
+/tools/bot6*
