@@ -822,8 +822,9 @@ def sfx_step():
         gr[:, i:i + gl] += pan(g, p)[:, :min(gl, n - i)]
     gr = eq(gr, [('bp', 3500, 0.8), ('lp', 7000)], pad=N(0.01))
     dirt = boxsmooth(dirt, N(0.0015))           # round off the heel transient
-    out = pan(0.6 * nrm(dirt) + 0.18 * nrm(sub), 0.0) + 0.6 * nrm(gr)
-    return finish_sfx(out, 0.12, -18.5, 0.025)
+    # a soft, low footfall: mostly the dull thud, a little grit, and quiet, since it plays three times a second
+    out = pan(0.6 * nrm(dirt) + 0.18 * nrm(sub), 0.0) + 0.1 * nrm(gr)
+    return finish_sfx(out, 0.12, -30.0, 0.025)
 
 
 # --------------------------------------------------------------------------

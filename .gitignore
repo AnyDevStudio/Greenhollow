@@ -8,3 +8,5 @@ CMakePresets.json
 /tools/__pycache__/
 /tools/ids6.json
 /tools/bot6*
+/tools/bot_online*
+/tools/shots_online/

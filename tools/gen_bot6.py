@@ -156,6 +156,14 @@ int main(){
     press(Buttons::Circle); CHECK(gv(G_dlg)==0&&gv(G_q1)==0,"Circle: not now");
     for(int k=0;k<4;++k) press(Buttons::Cross);
     CHECK(gv(G_q1)==1&&gv(G_dlg)==0&&seen(I_village_toast9),"X on her question accepts the quest");
+    { // a ranger aims by themselves: standing above and to the side of a slime and facing away, the arrow still finds it
+      const auto mark=firstAlive(I_village_gslime,3); const auto q=at(mark); const auto was=pv(1,P_cls); const auto hpWas=cv(mark,C_mhp);
+      setpv(1,P_cls,2); setpv(1,P_atkCd,0); put(h1,q[0]-150.f,q[1]-190.f); step(pad(-1,0)); idle(2);
+      step(pad(0,0,Buttons::Square)); idle(2);
+      CHECK(cv(mark,C_mhp)<hpWas&&pv(1,P_face)==0,"a ranger's arrow hits the nearest creature, and the ranger turns to face it");
+      setpv(1,P_atkCd,0); put(h1,q[0]-2000.f,q[1]); idle(3); const auto hpFar=cv(mark,C_mhp); step(pad(0,0,Buttons::Square)); idle(2);
+      CHECK(!g->Alive(mark)||cv(mark,C_mhp)==hpFar,"but not one that is out of reach");
+      setpv(1,P_cls,was); setpv(1,P_atkCd,0); idle(30); }
     for(int k=0;k<3&&aliveCount(I_village_gslime,3)>0;++k) fight(I_village_gslime,3,h1);
     CHECK(aliveCount(I_village_gslime,3)==0,"the three garden slimes are cut down");
     idle(2);

@@ -69,6 +69,30 @@
      "hiddenWhileEditing": true
     },
     {
+     "id": "t_join",
+     "type": "image",
+     "name": "Join a friend",
+     "x": 789,
+     "y": 740,
+     "controllable": false,
+     "width": 343,
+     "height": 90,
+     "source": "assets/ui/t_join.png",
+     "screenFixed": true
+    },
+    {
+     "id": "t_look",
+     "type": "image",
+     "name": "Looking for a game",
+     "x": 557,
+     "y": 900,
+     "controllable": false,
+     "width": 806,
+     "height": 50,
+     "source": "assets/ui/t_looking.png",
+     "screenFixed": true
+    },
+    {
      "id": "t_pointer",
      "type": "image",
      "name": "Title pointer",
@@ -85,7 +109,7 @@
      "type": "image",
      "name": "Title help",
      "x": 889,
-     "y": 770,
+     "y": 850,
      "controllable": false,
      "width": 143,
      "height": 43,

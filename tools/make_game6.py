@@ -94,7 +94,8 @@ for q, (name, desc) in enumerate(QUESTS, 1):
     lab_text(f'qn{q}', name, 40, U.GOLD); lab_text(f'qd{q}', desc, 30, U.PAPER, 900)
 lab_text('q_done', 'Done', 32, U.MINT); lab_text('q_ready', 'Go back and tell them!', 30, U.GOLD); lab_text('q_empty', 'No quests yet. Talk to the people you meet.', 32, U.DIM)
 lab_text('journalhelp', '[O] Back', 26, U.MINT)
-lab_text('new', 'New game', 54); lab_text('cont', 'Continue', 54); lab_text('cont_dim', 'Continue', 54, U.DIM); lab_text('titlehelp', '[X] Choose', 26, U.MINT)
+lab_text('new', 'New game', 54); lab_text('join', 'Join a friend', 54); lab_text('looking', "Looking for a friend's game on your network...      [O] Stop", 30, U.MINT)
+lab_text('cont', 'Continue', 54); lab_text('cont_dim', 'Continue', 54, U.DIM); lab_text('titlehelp', '[X] Choose', 26, U.MINT)
 lab_text('p2title', 'Playing with a friend? They press [X] on a second controller.', 26, U.MINT); lab_text('p2ready', 'Player 2 is ready!', 34, U.GOLD)
 STORY = [
     ('Greenhollow was a quiet place: a few cottages, a garden, a well older than anyone could remember.', 'Evenings smelled of woodsmoke, and nothing much ever happened.'),
@@ -316,13 +317,16 @@ HIDDEN_AT_START = ['dim', 'banner', 'peace', 'dlg_panel', 'dlg_x', 'p2_panel', '
 
 # ---------- blocks used in every place you can walk
 def gameplay(): return 'mode = 0 and bag = 0 and dlg = 0'
+def each_screen(*a):
+    "Blocks for what stays on the screen: once for each screen in the place, as its first player. Online every friend has a screen."
+    return each_player(when('seat = 1', *a))
 def toast(k, t=150): return [setv('toastK', k), setv('toastT', t)]
 
 def world_start(where, music_name):
     "When a place starts: the menus closed, the players' looks and cameras, their pets, and where they arrive."
     a = [act('setVolume', value=70), music(music_name), setv('mode', 0), setv('bag', 0), setv('dlg', 0), setv('where', where), setv('atkWait', 0),
-         *[hide(i) for i in HIDDEN_AT_START + BAG_IDS], follow('hero1')]
-    for p in PLAYERS[1:]: a.append(hide(f'hero{p}'))
+         *[hide(i) for i in HIDDEN_AT_START + BAG_IDS], follow('hero1'), act('hostOnline')]
+    for p in PLAYERS: a.append(hide(f'hero{p}'))
     a.append(each_player(show('@player'), setv('atkNow', 0), setv('boomNow', 0), setv('slashT', 0),
                          *[as_player(p, look(f'hero{p}', 'skin * 4 + outfit'), look(f'hair{p}', 'hstyle * 4 + hcolor'), look(f'gear{p}', 'cls - 1')) for p in PLAYERS],
                          when('petKind > 0', spawn('pet', '@player', 60, 8, f('owner', 'player')))))
@@ -352,7 +356,7 @@ def walking():
         blocks += [when('face = 2', *[flip(i, True) for i in parts]), when('face != 2', *[flip(i, False) for i in parts])]
         per.append(as_player(p, *blocks))
     e.append(frame(each_player(*per)))
-    e.append(frame(each_player(when('moving = 1 and mode = 0', chg('stepT', 1), when('stepT >= 18', setv('stepT', 0), snd('step'))), when('moving = 0', setv('stepT', 14)))))
+    e.append(frame(each_player(when('moving = 1 and mode = 0', chg('stepT', 1), when('stepT >= 22', setv('stepT', 0), snd('step'))), when('moving = 0', setv('stepT', 16)))))
     return e
 
 def player_stats():
@@ -373,17 +377,20 @@ def player_stats():
         when('hp <= 0', f('hp', 'maxHp'), f('gold', 'gold - gold / 10'), put('@player', 'respawn', 0, 0), *toast(8), snd('hurt')),
     ))
 
+def arrow_blocks():
+    "An arrow leaves the way its player faces."
+    return [when('face = 3', spawn('arrowh', '@player', 40, 8, setv('dir', 3), setv('life', 26), flip('@self', False))),
+            when('face = 2', spawn('arrowh', '@player', -40, 8, setv('dir', 2), setv('life', 26), flip('@self', True))),
+            when('face = 1', spawn('arrowup', '@player', 24, -50, setv('dir', 1), setv('life', 26))),
+            when('face = 0', spawn('arrowdn', '@player', 24, 40, setv('dir', 0), setv('life', 26)))]
+
 def attacks():
     "Square attacks the way the player's class does: a sword sweep, an arrow, or a fireball that costs mana."
     sweep = [put(f'slash{p}', f'hero{p}', -64, -64) for p in PLAYERS]
-    arrow = [when('face = 3', spawn('arrowh', '@player', 40, 8, setv('dir', 3), setv('life', 26), flip('@self', False))),
-             when('face = 2', spawn('arrowh', '@player', -40, 8, setv('dir', 2), setv('life', 26), flip('@self', True))),
-             when('face = 1', spawn('arrowup', '@player', 24, -50, setv('dir', 1), setv('life', 26))),
-             when('face = 0', spawn('arrowdn', '@player', 24, 40, setv('dir', 0), setv('life', 26)))]
     fire = [spawn('fireball', '@player', 8, -10, f('dir', 'face'), setv('life', 14), f('owner', 'player'))]
     swing = when(f'atkCd = 0 and {gameplay()}',
                  when('cls = 1', setv('atkNow', 1), setv('atkCd', 22), setv('slashT', 10), *[as_player(p, show(f'slash{p}'), sweep[p - 1]) for p in PLAYERS], snd('hit')),
-                 when('cls = 2', setv('atkNow', 1), f('atkCd', '24 - 12 * sk2'), *arrow, snd('bow')),
+                 when('cls = 2', setv('atkNow', 1), f('atkCd', '24 - 12 * sk2'), setv('shoot', 1), snd('bow')),   # the arrow leaves at the end of the frame, once the ranger has turned to their mark
                  when('cls = 3 and mp >= 2', chg('mp', -2), setv('atkCd', 30), *fire, snd('magic')))
     e = [ppress('square', swing)]
     # the sweep follows its player while it shows, and hides when it is done
@@ -399,11 +406,11 @@ def attacks():
 
 def end_of_frame():
     "Attacks last one frame: every creature has had its chance to be hit by them."
-    return frame(each_player(setv('atkNow', 0), setv('boomNow', 0)))
+    return frame(each_player(when('shoot = 1', setv('shoot', 0), *arrow_blocks()), setv('atkNow', 0), setv('boomNow', 0), f('aimPrev', 'aimD'), setv('aimD', 9999)))
 
 def pets():
     "Each pet follows its owner, sits when it is hungry, and grows with its owner's pet level."
-    return [copies('pet', each_player(when('player = owner',
+    return [copies('pet', setv('cnt', 0), each_player(when('player = owner', chg('cnt', 1))), when('cnt = 0', remove()), each_player(when('player = owner',
         f('petX', 'selfX'), f('petY', 'selfY'),
         look('@self', '(petKind - 1) * 3 + (petLevel >= 4) + (petLevel >= 8)'),
         when('dist > 900', put('@self', '@player', 60, 8)),
@@ -415,14 +422,14 @@ def pets():
 def bag_and_pause():
     "The bag and the pause menu, which belong to the screen: whoever opens one drives it."
     e = []
-    e.append(ppress('triangle', when('mode = 0 and dlg = 0', f('pick', 'bag'), when('pick = 1', setv('bag', 0)), when('pick = 0', setv('bag', 1), f('bagP', 'player'), snd('menu_select')))))
+    e.append(ppress('triangle', when('mode = 0 and dlg = 0', f('pick', 'bag'), when('pick = 1', setv('bag', 0)), when('pick = 0', setv('bag', 1), f('bagP', 'seat'), snd('menu_select')))))
     e.append(ppress('circle', when('bag = 1 and potion > 0 and hp < maxHp', chg('potion', -1), chg('hp', 8), snd('heal'))))
     e.append(ppress('square', when('bag = 1 and treat > 0 and petKind > 0', chg('treat', -1), setv('petHunger', 100), chg('petXp', 5), snd('eat'), *toast(14))))
-    open_pause = [setv('mode', 1), setv('sel', 0), setv('bag', 0), f('menuP', 'player'), act('pauseGame'), snd('pause')]
+    open_pause = [setv('mode', 1), setv('sel', 0), setv('bag', 0), f('menuP', 'seat'), act('pauseGame'), snd('pause')]
     resume = [setv('mode', 0), act('resumeGame'), snd('menu_select')]
-    e.append(ppress('options', f('pick', 'mode'), when('pick = 0 and dlg = 0', *open_pause), when('pick != 0 and player = menuP', *resume)))
-    e.append(ppress('circle', when('player = menuP', f('pick', 'mode'), when('pick = 1', *resume), when('pick >= 2', setv('mode', 1), snd('menu_move')))))
-    me = 'player = menuP and '
+    e.append(ppress('options', f('pick', 'mode'), when('pick = 0 and dlg = 0', *open_pause), when('pick != 0 and seat = menuP', *resume)))
+    e.append(ppress('circle', when('seat = menuP', f('pick', 'mode'), when('pick = 1', *resume), when('pick >= 2', setv('mode', 1), snd('menu_move')))))
+    me = 'seat = menuP and '
     e.append(ppress('moveUp', when(me + 'mode = 1', f('sel', '(sel + 4) % 5'), snd('menu_move')), when(me + 'mode = 2 and ssel % 3 != 0', chg('ssel', -1), snd('menu_move'))))
     e.append(ppress('moveDown', when(me + 'mode = 1', f('sel', '(sel + 1) % 5'), snd('menu_move')), when(me + 'mode = 2 and ssel % 3 != 2', chg('ssel', 1), snd('menu_move'))))
     e.append(ppress('moveLeft', when(me + 'mode = 2 and ssel >= 3', chg('ssel', -3), snd('menu_move'))))
@@ -431,19 +438,19 @@ def bag_and_pause():
         need = 'sp > 0' + (f' and sk{k - 1} = 1' if k % 3 else '')
         return when(f'ssel = {k} and sk{k} = 0 and {need}', setv(f'sk{k}', 1), chg('sp', -1), snd('skill'), *toast(3, 120))
     save_now = [setv('hasSave', 1), setv('p2ready', 0), save(), *toast(1), snd('save')]
-    e.append(ppress('cross', when('player = menuP', f('pick', 'mode'), f('pick2', 'sel'),
+    e.append(ppress('cross', when('seat = menuP', f('pick', 'mode'), f('pick2', 'sel'),
         when('pick = 1 and pick2 = 0', *resume), when('pick = 1 and pick2 = 1', setv('mode', 2), setv('ssel', 0), snd('menu_select')),
         when('pick = 1 and pick2 = 2', setv('mode', 3), snd('menu_select')), when('pick = 1 and pick2 = 3', *save_now),
-        when('pick = 1 and pick2 = 4', setv('mode', 0), act('resumeGame'), snd('menu_select'), go('title')),
+        when('pick = 1 and pick2 = 4', setv('mode', 0), act('resumeGame'), snd('menu_select'), when('guest = 1', act('stopOnline')), other(act('stopOnline'), go('title'))),
         when('pick = 2', *[learn(k) for k in range(9)]))))
     # what the menus show
     shown = [*[hide(i) for i in ['dim'] + PAUSE + SKILL_ALL + JOURNAL], when('mode >= 1', show('dim')),
              when('mode = 1', *[show(i) for i in PAUSE], *[when(f'sel = {n}', at('pointer', 720, y + 18)) for n, y in enumerate(OPT_Y)])]
-    skill = [*[show(i) for i in SKILL_BASE], *[when(f'menuP = {p}', show(f'spn{p}')) for p in PLAYERS]]
+    skill = [*[show(i) for i in SKILL_BASE], *[when(f'menuP = {p}', show(f'spn{p}')) for p in (1, 2)]]
     for k in range(9):
         x, y = node_xy(k)
         skill.append(when(f'ssel = {k}', at('skill_ring', x - 18, y - 18)))
-    skill.append(each_player(when('player = menuP',
+    skill.append(each_player(when('seat = menuP and mode = 2',
         *[when(f'cls = {c + 1}', show(f'brc{c}'), *[show(f'cicon{c}_{k}') for k in range(3)], *[when(f'ssel = {k}', show(f'sn{c}_{k}'), show(f'sd{c}_{k}')) for k in range(3)]) for c in range(3)],
         *[when(f'ssel = {k}', show(f'sn{k}'), show(f'sd{k}')) for k in range(3, 9)],
         *[when(f'sk{k} = 1', show(f'own{k}')) for k in range(9)],
@@ -460,30 +467,37 @@ def bag_and_pause():
         jr.append(when(f'q{q} = 1', show(f'jq{q}'), show(f'jd{q}'), *([show(counters[q])] if q in counters else []), when(ready[q], show(f'jready{q}'))))
         jr.append(when(f'q{q} = 2', show(f'jq{q}'), show(f'jok{q}')))
     shown.append(when('mode = 3', *jr))
-    e.append(frame(*shown))
+    e.append(frame(each_screen(*shown)))
     return e
 
 def screen_frame():
     "The players' cards, the bag, the level banner and the notes."
-    a = [hide('mana'), hide('p1_mp'), each_player(as_player(1, when('cls = 3', show('mana'), show('p1_mp')))),
-         *[hide(i) for i in ['p2_panel', 'p2_name', 'p2_lv', 'heart2', 'p2_hp']], each_player(as_player(2, *[show(i) for i in ['p2_panel', 'p2_name', 'p2_lv', 'heart2', 'p2_hp']])),
+    a = [hide('mana'), hide('p1_mp'), each_player(when('seat = 1 and cls = 3', show('mana'), show('p1_mp'))),
+         *[hide(i) for i in ['p2_panel', 'p2_name', 'p2_lv', 'heart2', 'p2_hp']], each_player(when('seat = 2', *[show(i) for i in ['p2_panel', 'p2_name', 'p2_lv', 'heart2', 'p2_hp']])),
          *[hide(i) for i in BAG_IDS], when('bag = 1', *[show(i) for i in BAG_IDS if i not in PET_BAG + ['bag_hs', 'bag_hi', 'bag_hn']], when('hammer = 1', show('bag_hs'), show('bag_hi'), show('bag_hn')),
-              each_player(when('player = bagP', when('petKind = 0', show('bag_pn')), when('petKind = 1', show('bag_pc')), when('petKind = 2', show('bag_pd')),
+              each_player(when('seat = bagP and bag = 1', when('petKind = 0', show('bag_pn')), when('petKind = 1', show('bag_pc')), when('petKind = 2', show('bag_pd')),
                           when('petKind > 0', show('bag_pl'), when('petHunger > 30', show('bag_pf')), other(show('bag_ph')))))),
          when('bannerT > 0', chg('bannerT', -1)), hide('banner'), when('bannerT > 0 and bag = 0 and mode = 0', show('banner')),
          hide('peace'), when('endT > 0', chg('endT', -1), show('peace')),
          *[hide(i) for i in TOAST_IDS], when('toastT > 0', chg('toastT', -1), when('mode = 0', show('toast'), *[when(f'toastK = {k}', show(f'toast{k}')) for k in TOASTS])),
          hide('hint_panel'), hide('hint'), when('dlg = 0 and mode = 0 and bag = 0', show('hint_panel'), show('hint'))]
-    return frame(*a)
+    return frame(each_screen(*a))
 
-def joining():
-    "A player who joins in the middle of the game gets a character at once: a ranger, if they never made one."
-    return [joins(when('made = 0', setv('made', 1), setv('cls', 2), setv('skin', 1), setv('outfit', 1), setv('hstyle', 2), setv('hcolor', 2), setv('level', 1), setv('hp', 20),
-                       *[setv(f'n{k}', v) for k, v in enumerate((23, 18, 5, 14))]),
-                  show('@player'), *[as_player(p, look(f'hero{p}', 'skin * 4 + outfit'), look(f'hair{p}', 'hstyle * 4 + hcolor'), look(f'gear{p}', 'cls - 1'), put(f'hero{p}', 'hero1', 56, 0)) for p in PLAYERS[1:]],
-                  as_player(2, follow_both('hero1', 'hero2')),
-                  when('player > 1', *toast(2), snd('menu_select')),
-                  when('petKind > 0', spawn('pet', '@player', 60, 8, f('owner', 'player'))))]
+def joining(where, music_name, entries):
+    """A player arrives in a place that is already going: a second controller in the middle of the game, a friend
+    joining online, or a screen walking in where another screen already is. The first player of a screen sets that
+    screen up, as the start of a place does."""
+    screen = [act('setVolume', value=70), music(music_name), setv('mode', 0), setv('bag', 0), setv('dlg', 0), setv('where', where),
+              *[hide(i) for i in HIDDEN_AT_START + BAG_IDS if not i.startswith('slash')], follow('@player'),
+              when('guest = 1', put('@player', 'hero1', 56, 0)), *[when(f'from = {k}', put('@player', m, 0, 0)) for k, m in entries.items()]]
+    return [joins(when('made = 0 and guest = 1', go('create')),   # a friend with no character yet makes one first
+                  other(when('made = 0', setv('made', 1), setv('cls', 2), setv('skin', 1), setv('outfit', 1), setv('hstyle', 2), setv('hcolor', 2), setv('level', 1), setv('hp', 20),
+                             *[setv(f'n{k}', v) for k, v in enumerate((23, 18, 5, 14))]),
+                        show('@player'), setv('atkNow', 0), setv('boomNow', 0), setv('slashT', 0),
+                        *[as_player(p, look(f'hero{p}', 'skin * 4 + outfit'), look(f'hair{p}', 'hstyle * 4 + hcolor'), look(f'gear{p}', 'cls - 1')) for p in PLAYERS],
+                        when('seat = 1', *screen),
+                        when('seat = 2', put('@player', 'hero1', 56, 0), follow_both('hero1', 'hero2'), when('greeted = 0', setv('greeted', 1), *toast(2), snd('menu_select'))),
+                        when('petKind > 0', spawn('pet', '@player', 60, 8, f('owner', 'player')))))]
 
 def exits(gates):
     "Walking into a way out takes everyone to the next place."
@@ -515,7 +529,7 @@ class Talk:
             branch_ = [f('opened', '0')]
             for ci, c in enumerate(s.convs):
                 if c[0] != npc: continue
-                branch_.append(when(f'opened = 0 and ({c[1]})', setv('opened', 1), setv('dlg', s.ids[(ci, 0)]), f('talker', 'player'), setv('who', s.npcs.index(npc) + 1), snd('talk'), *c[3]))
+                branch_.append(when(f'opened = 0 and ({c[1]})', setv('opened', 1), setv('dlg', s.ids[(ci, 0)]), f('talker', 'seat'), setv('who', s.npcs.index(npc) + 1), snd('talk'), *c[3]))
             opens.append(near('@player', npc, 'lessOrEqual', 170, *branch_))
         advance = []
         for ci, c in enumerate(s.convs):
@@ -525,20 +539,20 @@ class Talk:
                 if li < last: advance.append(when(f'pick = {i}', setv('dlg', s.ids[(ci, li + 1)]), snd('talk')))
                 elif 'cross' in c[4]: advance.append(when(f'pick = {i}', setv('dlg', 0), *c[4]['cross']))
                 else: advance.append(when(f'pick = {i}', setv('dlg', 0)))
-        e.append(ppress('cross', f('pick', 'dlg'), when('pick = 0 and mode = 0 and bag = 0', *opens), when('pick > 0 and player = talker', *advance)))
+        e.append(ppress('cross', f('pick', 'dlg'), when('pick = 0 and mode = 0 and bag = 0', *opens), when('pick > 0 and seat = talker', *advance)))
         for button in ('circle', 'square'):
             acts = []
             for ci, c in enumerate(s.convs):
                 i = s.ids[(ci, len(c[2]) - 1)]
                 if button in c[4] or (button == 'circle' and c[4]): acts.append(when(f'pick = {i}', setv('dlg', 0), *c[4].get(button, [])))
-            if acts: e.append(ppress(button, f('pick', 'dlg'), when('pick > 0 and player = talker', *acts)))
+            if acts: e.append(ppress(button, f('pick', 'dlg'), when('pick > 0 and seat = talker', *acts)))
         shown = [hide('dlg_panel'), hide('dlg_x'), *[hide(f'who_{n}') for n in s.npcs], *[hide(f'line_{k}') for k in s.keys()],
                  when('dlg > 0', show('dlg_panel'), show('dlg_x'), *[when(f'who = {k + 1}', show(f'who_{n}')) for k, n in enumerate(s.npcs)],
                       *[when(f'dlg = {s.ids[(ci, li)]}', show(f'line_{key}')) for ci, c in enumerate(s.convs) for li, key in enumerate(c[2])]),
-                 *[hide(f'talk_{n}') for n in s.npcs],
-                 when('dlg = 0 and mode = 0', each_player(*[near('@player', n, 'lessOrEqual', 170, show(f'talk_{n}')) for n in s.npcs])),
-                 when('dlg > 0', each_player(when('player = talker', *[when(f'who = {k + 1}', near('@player', n, 'greater', 300, setv('dlg', 0))) for k, n in enumerate(s.npcs)])))]
-        e.append(frame(*shown))
+                 when('dlg > 0', each_player(when('seat = talker and dlg > 0', *[when(f'who = {k + 1}', near('@player', n, 'greater', 300, setv('dlg', 0))) for k, n in enumerate(s.npcs)])))]
+        e.append(frame(each_screen(*shown)))
+        # the words over someone's head stand in the world, for whoever is near and free to talk
+        e.append(frame(*[hide(f'talk_{n}') for n in s.npcs], each_player(when('dlg = 0 and mode = 0', *[near('@player', n, 'lessOrEqual', 170, show(f'talk_{n}')) for n in s.npcs]))))
         return e
 
 def reward(gold=0, xp=0, potion=0, extra=()):
@@ -575,8 +589,10 @@ DUNN = [('dunn', 'q5 = 0', ['d1', 'd2'], [], dict(cross=accept(5))),
 
 # ---------- creatures: how each kind behaves, fights and is rewarded
 HIT_W = 'atkNow = 1 and cls = 1 and dist < 150 + 60 * sk1 and (sk2 = 1 or (face = 3 and hx > -40) or (face = 2 and hx < 40) or (face = 0 and hy > -40) or (face = 1 and hy < 40))'
-HIT_R = ('atkNow = 1 and cls = 2 and ((face = 3 and hx > 0 and hx < 600 + 250 * sk0 and abs(hy) < 70) or (face = 2 and hx < 0 and -hx < 600 + 250 * sk0 and abs(hy) < 70)'
-         ' or (face = 0 and hy > 0 and hy < 600 + 250 * sk0 and abs(hx) < 70) or (face = 1 and hy < 0 and -hy < 600 + 250 * sk0 and abs(hx) < 70))')
+# A ranger aims by themselves: the arrow goes to the creature nearest to them, if it is within reach. Every creature tells
+# each player how far it is (aimD); the nearest of the frame before (aimPrev) is the mark.
+HIT_R = 'atkNow = 1 and cls = 2 and dist <= aimPrev + 16 and dist < 520 + 250 * sk0'
+TURN_TO_MARK = [when('abs(hx) >= abs(hy)', when('hx > 0', setv('face', 3)), other(setv('face', 2))), other(when('hy > 0', setv('face', 0)), other(setv('face', 1)))]
 HIT_M = 'boomNow = 1 and (selfX - boomX) * (selfX - boomX) + (selfY - boomY) * (selfY - boomY) < (170 + 80 * sk1) * (170 + 80 * sk1)'
 PET_BITE = 'petKind > 0 and petCd = 0 and petHunger > 0 and (selfX - petX) * (selfX - petX) + (selfY - petY) * (selfY - petY) < 40000'
 
@@ -604,7 +620,8 @@ def mob(t, kind, *, levels, hp, temper, speed, calm=70, roam=220, aggro=420, pac
         *([look('@self', look_)] if look_ else []),
         each_player(
             f('hx', 'selfX - playerX'), f('hy', 'selfY - playerY'),
-            when(f'mhp > 0 and {HIT_W}', *hit, kill), when(f'mhp > 0 and {HIT_R}', *hit, kill), when(f'mhp > 0 and {HIT_M}', *hit, kill),
+            when('mhp > 0 and dist < aimD', f('aimD', 'dist')),
+            when(f'mhp > 0 and {HIT_W}', *hit, kill), when(f'mhp > 0 and {HIT_R}', *TURN_TO_MARK, *hit, kill), when(f'mhp > 0 and {HIT_M}', *hit, kill),
             when(f'mhp > 0 and {PET_BITE}', f('mhp', 'mhp - petLevel - 2 * sk8'), setv('petCd', 70), chg('petXp', 1), setv('mstate', onhit),
                  put('hitfx', '@self', -28, -28), burst('hitfx'), when('petKind = 1', snd('meow')), other(snd('bark')), kill),
             when(f'mhp > 0 and mstate = 1 and dist < {reach} and hurtCd = 0 and mcd = 0', f('hp', f'hp - ({dmg})'), setv('hurtCd', 45), setv('mcd', 50),
@@ -700,7 +717,7 @@ def village():
     logic = [start(*world_start(1, 'theme'), *arrive({0: 'from0', 1: 'from1', 2: 'from2'}),
                    when('gKills < 1', spawn('gslime', 'gs1', 0, 0, *born(1, 1, hp, '2'))), when('gKills < 2', spawn('gslime', 'gs2', 0, 0, *born(1, 2, hp, '2'))),
                    when('gKills < 3', spawn('gslime', 'gs3', 0, 0, *born(2, 2, hp, '2'))), *folk_spawns(['fk1', 'fk2', 'fk3']))]
-    logic += joining() + walking() + attacks() + talk.events() + bag_and_pause()
+    logic += joining(1, 'theme', {0: 'from0', 1: 'from1', 2: 'from2'}) + walking() + attacks() + talk.events() + bag_and_pause()
     logic += [mob('gslime', 'slime', levels=(1, 2), hp=hp, temper='aggro', speed=150, calm=50, roam=90, aggro=260, look_='2',
                   on_kill=[chg('gKills', 1), when('gKills >= 3 and gardenClean = 0', setv('gardenClean', 1), *toast(4), snd('complete'))]),
               folk_logic(), *pets(), *drops(), player_stats(), screen_frame()]
@@ -735,8 +752,8 @@ def house():
     sleep = ppress('cross', when(f'dlg = 0 and mode = 0 and bag = 0', near('@player', 'bedspot', 'lessOrEqual', 140,
                    each_player(f('hp', 'maxHp'), f('mp', 'maxMp')), setv('hasSave', 1), save(), *toast(1), snd('save'))))
     logic = [start(*world_start(2, 'theme'), *arrive({0: 'from0', 1: 'from1'}))]
-    logic += joining() + walking() + attacks() + talk.events() + [sleep] + bag_and_pause()
-    logic += [frame(hide('sleep'), when('dlg = 0 and mode = 0', each_player(near('@player', 'bedspot', 'lessOrEqual', 140, show('sleep'))))), *pets(), *drops(), player_stats(), screen_frame()]
+    logic += joining(2, 'theme', {0: 'from0', 1: 'from1'}) + walking() + attacks() + talk.events() + [sleep] + bag_and_pause()
+    logic += [frame(hide('sleep'), each_player(when('dlg = 0 and mode = 0', near('@player', 'bedspot', 'lessOrEqual', 140, show('sleep'))))), *pets(), *drops(), player_stats(), screen_frame()]
     logic += exits([('exit', 1, 'village')])
     logic.append(end_of_frame())
     return dict(id='house', name='House', background='#0A080E', world=dict(width=W * TS, height=H * TS), tilt=45, items=items), logic
@@ -778,7 +795,7 @@ def meadow():
     logic = [start(*world_start(3, 'meadow'), *arrive({1: 'from1', 2: 'from2', 3: 'from3'}),
                    *[spawn('slime', m, 0, 0, *born(1, 3, '5 + mlv * 2', '0')) for m in sl], *[spawn('hopper', m, 0, 0, *born(1, 2, '3 + mlv')) for m in hpm],
                    when('hammer != 0', hide('hammer_item')))]
-    logic += joining() + walking() + attacks() + bag_and_pause()
+    logic += joining(3, 'meadow', {1: 'from1', 2: 'from2', 3: 'from3'}) + walking() + attacks() + bag_and_pause()
     logic += [spawner('slime', 'spawnA', 5, sl, 1, 3, '5 + mlv * 2', look_='0'), spawner('hopper', 'spawnB', 5, hpm, 1, 2, '3 + mlv'),
               mob('slime', 'slime', levels=(1, 3), hp='', temper='calm', speed=150, calm=40, roam=180, look_='0'),
               mob('hopper', 'hopper', levels=(1, 2), hp='', temper='flee', speed=330, calm=90, roam=260, coin=20, fur=75, onhit=2),
@@ -835,7 +852,7 @@ def town():
     items += talk.items({'odo': (29 * TS + 32, 12 * TS + 2), 'pell': (33 * TS + 32, 25 * TS + 2), 'rhea': (24 * TS + 32, 11 * TS + 2)})
     items += hud_items() + bag_items() + menu_items()
     logic = [start(*world_start(4, 'town'), *arrive({1: 'from1'}), *folk_spawns([f'fk{k}' for k in range(1, 7)]))]
-    logic += joining() + walking() + attacks() + talk.events() + bag_and_pause()
+    logic += joining(4, 'town', {1: 'from1'}) + walking() + attacks() + talk.events() + bag_and_pause()
     logic += [folk_logic(), *pets(), *drops(), player_stats(), screen_frame()]
     logic += exits([('gate_s', 2, 'meadow')])
     logic.append(end_of_frame())
@@ -885,7 +902,7 @@ def forest():
     wolves = [spawn('wolf', m, dx, dy, *born(4, 6, wolf_hp)) for m in ('pk1', 'pk2') for dx, dy in ((0, 0), (90, 40), (-70, 60))]
     logic = [start(*world_start(5, 'forest'), *arrive({1: 'from1', 2: 'from2'}), *wolves,
                    *[spawn('boar', m, 0, 0, *born(5, 7, boar_hp)) for m in ('bo1', 'bo2', 'bo3')], *[spawn('bslime', m, 0, 0, *born(3, 4, sl_hp, '1')) for m in ('bs1', 'bs2', 'bs3')])]
-    logic += joining() + walking() + attacks() + talk.events() + bag_and_pause()
+    logic += joining(5, 'forest', {1: 'from1', 2: 'from2'}) + walking() + attacks() + talk.events() + bag_and_pause()
     logic += [spawner('wolf', 'spawnA', 6, ['pk1', 'pk2', 'pk3'], 4, 6, wolf_hp, 300), spawner('boar', 'spawnB', 3, ['bo1', 'bo2', 'bo3'], 5, 7, boar_hp, 600),
               spawner('bslime', 'spawnC', 3, ['bs1', 'bs2', 'bs3'], 3, 4, sl_hp, 420, '1'),
               mob('wolf', 'wolf', levels=(4, 6), hp=wolf_hp, temper='aggro', speed=340, calm=80, roam=200, aggro=460, pack=520, reach=90, cry='wolf',
@@ -933,7 +950,7 @@ def cave():
                    *[spawn('bat', m, dx, dy, *born(7, 9, bat_hp)) for m in ('bt1', 'bt2') for dx, dy in ((0, 0), (70, -30), (-60, 40), (40, 60))],
                    *[spawn('golem', m, 0, 0, *born(9, 10, golem_hp)) for m in ('gm1', 'gm2', 'gm3')],
                    when('wardenDead = 0', spawn('warden', 'lair', 0, 0, *born(12, 12, warden_hp))))]
-    logic += joining() + walking() + attacks() + bag_and_pause()
+    logic += joining(6, 'cave', {1: 'from1'}) + walking() + attacks() + bag_and_pause()
     logic += [spawner('bat', 'spawnA', 8, ['bt1', 'bt2', 'bt3'], 7, 9, bat_hp, 240), spawner('golem', 'spawnB', 3, ['gm1', 'gm2', 'gm3'], 9, 10, golem_hp, 900),
               mob('bat', 'bat', levels=(7, 9), hp=bat_hp, temper='aggro', speed=420, calm=120, roam=160, aggro=420, pack=360, reach=70, cry='bat'),
               mob('golem', 'golem', levels=(9, 10), hp=golem_hp, temper='aggro', speed=170, calm=30, roam=100, aggro=320, reach=110, dmg='2 + mlv / 3', coin=80, cry='golem'),
@@ -951,8 +968,10 @@ GAME_VARS = dict(gold=10, potion=1, treat=0, fur=0, hammer=0, q1=0, q2=0, q3=0, 
                  bannerT=0, endT=0, hasSave=0, page=0, p2ready=0, cnt=0, cnt2=0, spawnA=0, spawnB=0, spawnC=0, hx=0, hy=0, code=0, atkWait=0)
 PLAYER_VARS = dict(cls=1, skin=0, outfit=0, hstyle=0, hcolor=0, **{f'n{k}': 0 for k in range(8)}, nlen=0, made=0, hp=14, maxHp=14, mp=0, maxMp=0, level=1, xp=0, atk=1, sp=1,
                    **{f'sk{k}': 0 for k in range(9)}, face=0, moving=0, stepT=0, atkCd=0, atkNow=0, hurtCd=0, regenT=0, mpT=0, slashT=0,
-                   petKind=0, petLevel=1, petXp=0, petHunger=100, petCd=0, petT=0, petX=0, petY=0, boomNow=0, boomX=0, boomY=0, crow=0, cgrid=0, cgx=0, cgy=0, cdone=0)
+                   petKind=0, petLevel=1, petXp=0, petHunger=100, petCd=0, petT=0, petX=0, petY=0, boomNow=0, boomX=0, boomY=0, crow=0, cgrid=0, cgx=0, cgy=0, cdone=0, greeted=0, aimD=9999, aimPrev=9999, shoot=0)
 COPY_VARS = dict(mhp=0, mmax=1, mlv=1, mstate=0, mcd=0, life=0, dir=0, owner=0)
+# What belongs to a screen: where it is, its menus, its talk and its notes. Online each friend's screen has its own.
+SCREEN_VARS = ['where', 'from', 'mode', 'sel', 'ssel', 'menuP', 'bagP', 'opened', 'dlg', 'talker', 'who', 'bag', 'toastT', 'toastK', 'bannerT', 'endT', 'page']
 GAME_TRANSIENT = ['mode', 'sel', 'ssel', 'bag', 'dlg', 'opened', 'toastT', 'bannerT', 'endT', 'pick', 'pick2', 'cnt', 'cnt2']
 NAMES = {1: (18, 15, 23, 1, 14), 2: (23, 18, 5, 14), 3: (13, 1, 18, 5), 4: (10, 15, 19)}   # ROWAN, WREN, MARE, JOS
 
@@ -962,9 +981,10 @@ def title():
     lw, lh = sized('ui/logo'); pw, ph = sized('ui/pointer')
     items = [hud('title_bg', 'Title painting', 0, 0, 1920, 1080, 'ui/title'), hud('logo', 'Logo', 960 - lw // 2, 120, lw, lh, 'ui/logo'),
              lab('t_new', 'New game', 960, 560, 'new', center=True), lab('t_cont', 'Continue', 960, 650, 'cont', center=True),
-             lab('t_cont_dim', 'Continue, no save', 960, 650, 'cont_dim', center=True),
+             lab('t_cont_dim', 'Continue, no save', 960, 650, 'cont_dim', center=True), lab('t_join', 'Join a friend', 960, 740, 'join', center=True),
+             lab('t_look', 'Looking for a game', 960, 900, 'looking', center=True),
              hud('t_pointer', 'Title pointer', 960 - SIZE['new'][0] // 2 - pw - 16, 578, pw, ph, 'ui/pointer'),
-             lab('t_help', 'Title help', 960, 770, 'titlehelp', center=True),
+             lab('t_help', 'Title help', 960, 850, 'titlehelp', center=True),
              lab('t_p2', 'Two players note', 960, 990, 'p2title', center=True), lab('t_p2ready', 'Player 2 ready', 960, 984, 'p2ready', center=True)]
     def reset_player():
         a = [setv(n, v) for n, v in PLAYER_VARS.items()]
@@ -974,15 +994,19 @@ def title():
     newgame = [*[setv(n, v) for n, v in GAME_VARS.items() if n not in ('hasSave', 'p2ready')], each_player(*reset_player()), snd('menu_select'), go('story')]
     resume_save = [*[setv(n, 0) for n in GAME_TRANSIENT], each_player(setv('atkCd', 0), setv('atkNow', 0), setv('hurtCd', 0), setv('slashT', 0), setv('cgrid', 0)), snd('menu_select'),
                    *[when(f'where = {k}', go(s)) for k, s in enumerate(['village', 'village', 'house', 'meadow', 'town', 'forest', 'cave'])]]
-    logic = [start(act('setVolume', value=70), music('title'), setv('hasSave', 0), setv('sel', 0), setv('p2ready', 0), setv('mode', 9), load(), hide('t_cont'), hide('t_p2ready'))]
-    for b in ('moveUp', 'moveDown'):
-        logic.append(ppress(b, when('player = 1 and hasSave = 1', f('sel', '1 - sel'), snd('menu_move'))))
-    logic.append(ppress('cross', when('player = 1', f('pick', 'sel'), when('pick = 0', *newgame), when('pick = 1 and hasSave = 1', *resume_save)),
+    logic = [start(act('setVolume', value=70), music('title'), setv('hasSave', 0), setv('sel', 0), setv('p2ready', 0), setv('mode', 9), load(), hide('t_cont'), hide('t_p2ready'), hide('t_look'))]
+    # up and down step over Continue while there is no save
+    logic.append(ppress('moveDown', when('player = 1 and online = 0', f('sel', '(sel + 1 + (sel = 0 and hasSave = 0)) % 3'), snd('menu_move'))))
+    logic.append(ppress('moveUp', when('player = 1 and online = 0', f('sel', '(sel + 2 - (sel = 2 and hasSave = 0)) % 3'), snd('menu_move'))))
+    logic.append(ppress('circle', when('online = 2', act('stopOnline'), snd('menu_move'))))
+    logic.append(ppress('cross', when('player = 1 and online = 0', f('pick', 'sel'), when('pick = 0', *newgame), when('pick = 1 and hasSave = 1', *resume_save), when('pick = 2', act('joinOnline'), snd('menu_select'))),
                         when('player = 2 and p2ready = 0', setv('p2ready', 1), snd('menu_select'))))
-    logic.append(frame(when('mode != 9', setv('mode', 9), setv('sel', 0), setv('p2ready', 0)), when('hasSave != 1', setv('sel', 0)),
+    logic.append(frame(when('mode != 9', setv('mode', 9), setv('sel', 0), setv('p2ready', 0)), when('hasSave != 1 and sel = 1', setv('sel', 0)),
                        hide('t_cont'), hide('t_cont_dim'), when('hasSave = 1', show('t_cont')), other(show('t_cont_dim')),
                        hide('t_p2ready'), hide('t_p2'), when('p2ready = 1', show('t_p2ready')), other(show('t_p2')),
-                       when('sel = 0', at('t_pointer', 960 - SIZE['new'][0] // 2 - pw - 16, 578)), other(at('t_pointer', 960 - SIZE['cont'][0] // 2 - pw - 16, 668))))
+                       hide('t_look'), when('online = 2', show('t_look')),
+                       when('sel = 0', at('t_pointer', 960 - SIZE['new'][0] // 2 - pw - 16, 578)), when('sel = 1', at('t_pointer', 960 - SIZE['cont'][0] // 2 - pw - 16, 668)),
+                       when('sel = 2', at('t_pointer', 960 - SIZE['join'][0] // 2 - pw - 16, 758))))
     return dict(id='title', name='Title', background='#151A2C', items=items), logic
 
 
@@ -996,7 +1020,7 @@ def story():
     logic = [start(act('setVolume', value=70), music('story'), setv('page', 0)),
              ppress('cross', chg('page', 1), snd('page'), when('page >= 4', go('create'))),
              ppress('options', go('create')),
-             frame(*[hide(i) for i in ids], *[when(f'page = {k}', show(f'story{k}'), show(f'st{k}a'), show(f'st{k}b')) for k in range(4)])]
+             frame(each_screen(*[hide(i) for i in ids], *[when(f'page = {k}', show(f'story{k}'), show(f'st{k}a'), show(f'st{k}b')) for k in range(4)]))]
     return dict(id='story', name='Story', background='#0A0A12', items=items), logic
 
 
@@ -1040,9 +1064,9 @@ def create():
               when('code >= 37 and code <= 38 and nlen > 0', chg('nlen', -1), *[when(f'nlen = {k}', setv(f'n{k}', 0)) for k in range(8)], snd('type')),
               when('code >= 39', setv('cgrid', 0), snd('menu_select'))]
     defaults = [setv('crow', 0), setv('cgrid', 0), setv('cdone', 0)]
-    logic = [start(act('setVolume', value=70), music('theme'), each_player(*defaults)),
+    logic = [start(act('setVolume', value=70), music('theme'), each_player(*defaults, when('made = 0 and nlen = 0', *[as_player(p, *[setv(f'n{k}', v) for k, v in enumerate(NAMES[p])], setv('nlen', len(NAMES[p])), setv('outfit', p - 1)) for p in PLAYERS]))),
              joins(when('made = 0', *[setv(n, v) for n, v in PLAYER_VARS.items() if n not in [f'n{k}' for k in range(8)] + ['nlen']],
-                        *[as_player(p, *[setv(f'n{k}', v) for k, v in enumerate(NAMES[p])], setv('nlen', len(NAMES[p])), setv('outfit', p - 1)) for p in PLAYERS]), *defaults, snd('menu_select')),
+                        *[as_player(p, *[setv(f'n{k}', v) for k, v in enumerate(NAMES[p])], setv('nlen', len(NAMES[p])), setv('outfit', p - 1)) for p in PLAYERS]), *defaults, when('seat = 1', act('setVolume', value=70), music('theme')), snd('menu_select')),
              ppress('moveUp', when('cgrid = 0 and cdone = 0', f('crow', '(crow + 6) % 7'), snd('menu_move')), when('cgrid = 1', f('cgy', '(cgy + 3) % 4'), snd('menu_move'))),
              ppress('moveDown', when('cgrid = 0 and cdone = 0', f('crow', '(crow + 1) % 7'), snd('menu_move')), when('cgrid = 1', f('cgy', '(cgy + 1) % 4'), snd('menu_move'))),
              ppress('moveLeft', row_change(-1), when('cgrid = 1', f('cgx', '(cgx + 9) % 10'), snd('menu_move'))),
@@ -1054,7 +1078,7 @@ def create():
     # everyone ready: off to the village, healthy
     logic.append(frame(setv('cnt', 0), setv('cnt2', 0), each_player(chg('cnt2', 1), when('cdone = 1', chg('cnt', 1))),
                        when('cnt = cnt2 and cnt > 0', each_player(f('maxHp', '10 + 2 * level + 4 * (cls = 1)'), f('hp', 'maxHp'), f('maxMp', '(cls = 3) * (6 + 2 * level)'), f('mp', 'maxMp')),
-                            setv('from', 0), snd('door'), go('village'))))
+                            each_screen(setv('from', 0), snd('door'), go('village')))))
     UI6_ = UI6
     shown = []
     for p in (1, 2):
@@ -1078,8 +1102,8 @@ def create():
                       when('cgy = 3 and cgx >= 6', show(f'ccell2_{p}'), when('cgx <= 7', at(f'ccell2_{p}', x0 + 80 + 6 * UI6_.CELL_W, y0 + 140 + 3 * UI6_.CELL_H)),
                            other(at(f'ccell2_{p}', x0 + 80 + 8 * UI6_.CELL_W, y0 + 140 + 3 * UI6_.CELL_H))),
                       other(show(f'ccell{p}'), *[when(f'cgx = {cx} and cgy = {cy}', at(f'ccell{p}', x0 + 80 + cx * UI6_.CELL_W, y0 + 140 + cy * UI6_.CELL_H)) for cy in range(4) for cx in range(10) if not (cy == 3 and cx >= 6)]))]
-        shown.append(frame(*[hide(i) for i in ids], each_player(as_player(p, *body_))))
-    shown.append(frame(hide('p2create'), setv('cnt2', 0), each_player(chg('cnt2', 1)), when('cnt2 < 2', show('p2create'))))
+        shown.append(frame(each_screen(*[hide(i) for i in ids], each_player(when(f'seat = {p}', *body_)))))
+    shown.append(frame(each_screen(hide('p2create'), when('guest = 0', setv('cnt2', 0), each_player(when('guest = 0', chg('cnt2', 1))), when('cnt2 < 2', show('p2create'))))))
     logic += shown
     # Items that share a picture sit next to each other, so the screen binds each picture once; panels stay under
     # what is on them, and the letter grid over everything.
@@ -1103,8 +1127,8 @@ for build in (title, story, create, village, house, meadow, town, forest, cave):
     scenes.append(sc); logics.append(dict(scene=sc['id'], events=lg))
 sounds = ['hit', 'hurt', 'pickup', 'talk', 'levelup', 'door', 'kill', 'theme', 'forest', 'title', 'menu_move', 'menu_select', 'pause', 'save', 'skill', 'step',
           'bow', 'magic', 'boom', 'wolf', 'howl', 'boar', 'bat', 'golem', 'meow', 'bark', 'eat', 'quest', 'complete', 'coin', 'heal', 'type', 'page', 'town', 'meadow', 'cave', 'story']
-variables = [dict(name=n, initial=v) for n, v in GAME_VARS.items()] + [dict(name=n, initial=v, scope='player') for n, v in PLAYER_VARS.items()] + [dict(name=n, initial=v, scope='copy') for n, v in COPY_VARS.items()]
-logic = dict(schemaVersion=5, variables=variables, sounds=[dict(name=s, source=f'assets/sounds/{s}.wav') for s in sounds], scenes=logics)
+variables = [dict(name=n, initial=v, scope='screen') if n in SCREEN_VARS else dict(name=n, initial=v) for n, v in GAME_VARS.items()] + [dict(name=n, initial=v, scope='player') for n, v in PLAYER_VARS.items()] + [dict(name=n, initial=v, scope='copy') for n, v in COPY_VARS.items()]
+logic = dict(schemaVersion=6, variables=variables, sounds=[dict(name=s, source=f'assets/sounds/{s}.wav') for s in sounds], scenes=logics)
 logic = json.loads(json.dumps(logic))
 # The shared screen blocks show and hide the dialog panel and the like; a place with no one to talk to has none, so
 # those blocks are left out there. Anything else naming a missing item is a mistake and stays for Studio to report.
