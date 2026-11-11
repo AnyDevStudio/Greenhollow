@@ -84,8 +84,7 @@ it in Studio to see how each part is done.
 
 ## Download
 
-From the [latest release](https://github.com/AnyDevStudio/Greenhollow/releases/latest). Release 0.2.0 is from before
-playing online and the ranger's aiming; those are in this repository and will be in the next release.
+From the [latest release](https://github.com/AnyDevStudio/Greenhollow/releases/latest):
 
 | System | File | How to start |
 |---|---|---|
@@ -134,9 +133,8 @@ choose Join a friend on the title. Both must be on the same local network.
 
 ## Build
 
-Build [AnyDevKit Studio](https://github.com/AnyDevStudio/AnyDevKit-Studio) from its
-[`feat/online`](https://github.com/AnyDevStudio/AnyDevKit-Studio/tree/feat/online) branch, which has the blocks for
-playing online (releases up to 0.1.0-alpha.4 cannot open this game), and set up its PS5 tools.
+Get [AnyDevKit Studio](https://github.com/AnyDevStudio/AnyDevKit-Studio) 0.1.0-alpha.5 or newer, which has the blocks
+for playing online (older versions cannot open this game), and set up its PS5 tools.
 `CMakePresets.json` holds paths on your machine, so make it with `adk init` first:
 
 ```sh
