@@ -161,6 +161,14 @@ int main(){
     idle(3);
     CHECK(H.OnlineState()==0&&F.OnlineState()==0&&F.CurrentScene()==S_title,"nobody is online any more, and both are on their titles");
 
+    // looking with nobody hosting: after ten seconds the title says what to check, and O stops looking
+    frame(In{},pad(0,1)); idle(2); frame(In{},pad(0,0,Buttons::Cross)); idle(30);
+    CHECK(F.OnlineState()==2&&fsees(I_title_t_look)&&!fsees(I_title_t_lookhint),"looking again, with no game to find: no hint at first");
+    idle(600);
+    CHECK(F.OnlineState()==2&&fsees(I_title_t_lookhint)&&!fsees(I_title_t_p2),"ten seconds later the title says what to check");
+    frame(In{},pad(0,0,Buttons::Circle)); idle(4);
+    CHECK(F.OnlineState()==0&&!fsees(I_title_t_look)&&!fsees(I_title_t_lookhint),"O stops looking, and the hint goes");
+
     std::printf("frames %ld\n%s\n",frames,failures?"ONLINE PLAYTHROUGH FAILED":"ONLINE PLAYTHROUGH PASSED");
     return failures?1:0;
 }

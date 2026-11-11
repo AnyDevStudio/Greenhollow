@@ -93,6 +93,18 @@
      "screenFixed": true
     },
     {
+     "id": "t_lookhint",
+     "type": "image",
+     "name": "Why no game is found",
+     "x": 282,
+     "y": 990,
+     "controllable": false,
+     "width": 1357,
+     "height": 43,
+     "source": "assets/ui/t_lookhint.png",
+     "screenFixed": true
+    },
+    {
      "id": "t_pointer",
      "type": "image",
      "name": "Title pointer",

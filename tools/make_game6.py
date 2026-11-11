@@ -95,6 +95,7 @@ for q, (name, desc) in enumerate(QUESTS, 1):
 lab_text('q_done', 'Done', 32, U.MINT); lab_text('q_ready', 'Go back and tell them!', 30, U.GOLD); lab_text('q_empty', 'No quests yet. Talk to the people you meet.', 32, U.DIM)
 lab_text('journalhelp', '[O] Back', 26, U.MINT)
 lab_text('new', 'New game', 54); lab_text('join', 'Join a friend', 54); lab_text('looking', "Looking for a friend's game on your network...      [O] Stop", 30, U.MINT)
+lab_text('lookhint', "Nothing yet. Your friend must be inside the game, past the title. With AnyPS5, join your friend's game there first.", 26, U.GOLD)
 lab_text('cont', 'Continue', 54); lab_text('cont_dim', 'Continue', 54, U.DIM); lab_text('titlehelp', '[X] Choose', 26, U.MINT)
 lab_text('p2title', 'Playing with a friend? They press [X] on a second controller.', 26, U.MINT); lab_text('p2ready', 'Player 2 is ready!', 34, U.GOLD)
 STORY = [
@@ -965,14 +966,14 @@ def cave():
 # ---------- variables: the game's, each player's, and each creature's
 GAME_VARS = dict(gold=10, potion=1, treat=0, fur=0, hammer=0, q1=0, q2=0, q3=0, q4=0, q5=0, gKills=0, gardenClean=0, wolfKills=0, wardenDead=0,
                  where=1, **{'from': 0}, mode=0, sel=0, ssel=0, menuP=1, bagP=1, pick=0, pick2=0, opened=0, dlg=0, talker=1, who=0, bag=0, toastT=0, toastK=0,
-                 bannerT=0, endT=0, hasSave=0, page=0, p2ready=0, cnt=0, cnt2=0, spawnA=0, spawnB=0, spawnC=0, hx=0, hy=0, code=0, atkWait=0)
+                 bannerT=0, endT=0, hasSave=0, page=0, p2ready=0, cnt=0, cnt2=0, spawnA=0, spawnB=0, spawnC=0, hx=0, hy=0, code=0, atkWait=0, lookT=0)
 PLAYER_VARS = dict(cls=1, skin=0, outfit=0, hstyle=0, hcolor=0, **{f'n{k}': 0 for k in range(8)}, nlen=0, made=0, hp=14, maxHp=14, mp=0, maxMp=0, level=1, xp=0, atk=1, sp=1,
                    **{f'sk{k}': 0 for k in range(9)}, face=0, moving=0, stepT=0, atkCd=0, atkNow=0, hurtCd=0, regenT=0, mpT=0, slashT=0,
                    petKind=0, petLevel=1, petXp=0, petHunger=100, petCd=0, petT=0, petX=0, petY=0, boomNow=0, boomX=0, boomY=0, crow=0, cgrid=0, cgx=0, cgy=0, cdone=0, greeted=0, aimD=9999, aimPrev=9999, shoot=0)
 COPY_VARS = dict(mhp=0, mmax=1, mlv=1, mstate=0, mcd=0, life=0, dir=0, owner=0)
 # What belongs to a screen: where it is, its menus, its talk and its notes. Online each friend's screen has its own.
 SCREEN_VARS = ['where', 'from', 'mode', 'sel', 'ssel', 'menuP', 'bagP', 'opened', 'dlg', 'talker', 'who', 'bag', 'toastT', 'toastK', 'bannerT', 'endT', 'page']
-GAME_TRANSIENT = ['mode', 'sel', 'ssel', 'bag', 'dlg', 'opened', 'toastT', 'bannerT', 'endT', 'pick', 'pick2', 'cnt', 'cnt2']
+GAME_TRANSIENT = ['lookT', 'mode', 'sel', 'ssel', 'bag', 'dlg', 'opened', 'toastT', 'bannerT', 'endT', 'pick', 'pick2', 'cnt', 'cnt2']
 NAMES = {1: (18, 15, 23, 1, 14), 2: (23, 18, 5, 14), 3: (13, 1, 18, 5), 4: (10, 15, 19)}   # ROWAN, WREN, MARE, JOS
 
 
@@ -983,6 +984,7 @@ def title():
              lab('t_new', 'New game', 960, 560, 'new', center=True), lab('t_cont', 'Continue', 960, 650, 'cont', center=True),
              lab('t_cont_dim', 'Continue, no save', 960, 650, 'cont_dim', center=True), lab('t_join', 'Join a friend', 960, 740, 'join', center=True),
              lab('t_look', 'Looking for a game', 960, 900, 'looking', center=True),
+             lab('t_lookhint', 'Why no game is found', 960, 990, 'lookhint', center=True),
              hud('t_pointer', 'Title pointer', 960 - SIZE['new'][0] // 2 - pw - 16, 578, pw, ph, 'ui/pointer'),
              lab('t_help', 'Title help', 960, 850, 'titlehelp', center=True),
              lab('t_p2', 'Two players note', 960, 990, 'p2title', center=True), lab('t_p2ready', 'Player 2 ready', 960, 984, 'p2ready', center=True)]
@@ -994,7 +996,7 @@ def title():
     newgame = [*[setv(n, v) for n, v in GAME_VARS.items() if n not in ('hasSave', 'p2ready')], each_player(*reset_player()), snd('menu_select'), go('story')]
     resume_save = [*[setv(n, 0) for n in GAME_TRANSIENT], each_player(setv('atkCd', 0), setv('atkNow', 0), setv('hurtCd', 0), setv('slashT', 0), setv('cgrid', 0)), snd('menu_select'),
                    *[when(f'where = {k}', go(s)) for k, s in enumerate(['village', 'village', 'house', 'meadow', 'town', 'forest', 'cave'])]]
-    logic = [start(act('setVolume', value=70), music('title'), setv('hasSave', 0), setv('sel', 0), setv('p2ready', 0), setv('mode', 9), load(), hide('t_cont'), hide('t_p2ready'), hide('t_look'))]
+    logic = [start(act('setVolume', value=70), music('title'), setv('hasSave', 0), setv('sel', 0), setv('p2ready', 0), setv('mode', 9), load(), hide('t_cont'), hide('t_p2ready'), hide('t_look'), hide('t_lookhint'), setv('lookT', 0))]
     # up and down step over Continue while there is no save
     logic.append(ppress('moveDown', when('player = 1 and online = 0', f('sel', '(sel + 1 + (sel = 0 and hasSave = 0)) % 3'), snd('menu_move'))))
     logic.append(ppress('moveUp', when('player = 1 and online = 0', f('sel', '(sel + 2 - (sel = 2 and hasSave = 0)) % 3'), snd('menu_move'))))
@@ -1004,7 +1006,8 @@ def title():
     logic.append(frame(when('mode != 9', setv('mode', 9), setv('sel', 0), setv('p2ready', 0)), when('hasSave != 1 and sel = 1', setv('sel', 0)),
                        hide('t_cont'), hide('t_cont_dim'), when('hasSave = 1', show('t_cont')), other(show('t_cont_dim')),
                        hide('t_p2ready'), hide('t_p2'), when('p2ready = 1', show('t_p2ready')), other(show('t_p2')),
-                       hide('t_look'), when('online = 2', show('t_look')),
+                       hide('t_look'), hide('t_lookhint'), when('online = 2', show('t_look'), when('lookT < 600', chg('lookT', 1))), other(setv('lookT', 0)),
+                       when('lookT >= 600', show('t_lookhint'), hide('t_p2'), hide('t_p2ready')),   # ten seconds with no game: say what to check
                        when('sel = 0', at('t_pointer', 960 - SIZE['new'][0] // 2 - pw - 16, 578)), when('sel = 1', at('t_pointer', 960 - SIZE['cont'][0] // 2 - pw - 16, 668)),
                        when('sel = 2', at('t_pointer', 960 - SIZE['join'][0] // 2 - pw - 16, 758))))
     return dict(id='title', name='Title', background='#151A2C', items=items), logic

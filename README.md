@@ -120,7 +120,7 @@ choose Join a friend on the title. Both must be on the same local network.
   characters, every quest, the journal, skills, saving, the bag, a fireball, adopting and feeding a cat, the wolf pack, the
   Stone Warden, fainting, and loading the save back. `tools/gen_bot6.py` writes that bot.
 - Playing online has been played through by a second bot, `tools/gen_bot6_online.py`: two copies of the game on
-  one computer, talking over its network as two consoles would. It checks 38 things: finding and joining the host,
+  one computer, talking over its network as two consoles would. It checks 41 things: finding and joining the host,
   making a character on the friend's own screen, each screen's own card, menus and bag, the two walking in two
   places at once and meeting again, each screen's own camera, leaving and coming back as the same character, and
   the host closing the game.
